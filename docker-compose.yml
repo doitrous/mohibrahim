@@ -1,0 +1,14 @@
+services:
+  site:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      SESSION_SECRET: ${SESSION_SECRET:-dev-secret}
+      HUB_TOKEN: ${HUB_TOKEN:-}
+      DATA_DIR: /app/data
+    volumes:
+      - site-data:/app/data
+volumes:
+  site-data:

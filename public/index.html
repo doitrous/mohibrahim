@@ -132,6 +132,26 @@
   .cta-card{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:34px;background:var(--ink);color:#fff}
   .cta-card .big{font-family:var(--disp);font-weight:700;font-size:34px;color:var(--gold)}
   .note{margin-top:26px;font-size:13.5px;color:var(--muted);display:flex;align-items:center;gap:8px}
+  /* offer */
+  .offer-sec{padding:64px 0 0}
+  .offer{background:var(--ink);color:#fff;border-radius:26px;padding:44px 48px;display:grid;grid-template-columns:1.3fr .9fr;gap:40px;align-items:center;position:relative;overflow:hidden}
+  .offer::after{content:"";position:absolute;inset-inline-end:-70px;top:-70px;width:240px;height:240px;background:radial-gradient(circle,rgba(184,147,75,.35),transparent 70%);pointer-events:none}
+  .offer-eyebrow{display:inline-block;background:var(--gold);color:var(--ink);font-weight:700;font-size:13px;padding:6px 14px;border-radius:999px;letter-spacing:.02em}
+  .offer h2{color:#fff;font-size:34px;margin:16px 0 10px}
+  .offer p{color:#C7D0E2;max-width:520px}
+  .pricerow{display:flex;align-items:baseline;gap:14px;margin-top:22px;flex-wrap:wrap}
+  .oldprice{position:relative;color:#93A2C0;font-size:24px;font-weight:600}
+  .oldprice::after{content:"";position:absolute;inset-inline:-3px;top:52%;height:2px;background:#E06A5F;transform:rotate(-8deg)}
+  .newprice{font-family:var(--disp);font-size:20px;color:var(--gold)}
+  .newprice b{font-size:48px;line-height:1}
+  .offer-cta{position:relative;z-index:1;display:flex;flex-direction:column;gap:14px;text-align:center}
+  .countdown{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:14px 16px}
+  .cd-label{display:block;font-size:13px;color:#9AA8C4;margin-bottom:6px}
+  .cd-time{font-family:var(--disp);font-weight:700;font-size:42px;color:#fff;letter-spacing:.06em;line-height:1}
+  .btn-lg{padding:17px 30px;font-size:17px}
+  .offer-call{color:#C7D0E2;font-size:14px}
+  .offer-call:hover{color:#fff}
+  @media(max-width:820px){.offer{grid-template-columns:1fr;padding:32px 24px;text-align:center}.offer p{margin-inline:auto}.pricerow,.offer-eyebrow{justify-content:center}.offer-eyebrow{align-self:center}}
   /* guarantee */
   .guar{background:var(--gold-soft);border:1px solid #DFD0AE;color:var(--ink);border-radius:26px;padding:52px 56px;display:grid;grid-template-columns:auto 1fr auto;gap:34px;align-items:center}
   .guar .seal{width:96px;height:96px;border-radius:50%;border:1.5px solid var(--gold2);display:flex;align-items:center;justify-content:center;color:var(--gold2);background:rgba(255,253,248,.5)}
@@ -291,6 +311,26 @@
   <div class="statitem"><div class="n" data-edit="stats.3.n">100%</div><div class="l" data-en="Consultation Refund">ضمان استرداد الاستشارة</div></div>
 </div></div>
 
+<!-- OFFER -->
+<section class="offer-sec" id="offer"><div class="wrap">
+  <div class="offer">
+    <div class="offer-main">
+      <span class="offer-eyebrow" data-en="Limited-time offer">عرض لفترة محدودة</span>
+      <h2 id="offerHead" data-edit="offer.headline" data-en="Your first consultation for 200 EGP">استشارتك الأولى بـ 200 جنيه فقط</h2>
+      <p id="offerText" data-edit="offer.text" data-en="Book now and save 200 EGP on your first consultation — a comprehensive exam, digital jaw assessment and a clear treatment plan, backed by our refund guarantee.">احجز الآن ووفّر 200 جنيه على استشارتك الأولى — فحص شامل وتشخيص رقمي للفكين وخطة علاج واضحة، مع ضمان استرداد الاستشارة.</p>
+      <div class="pricerow">
+        <span class="oldprice"><span id="oldPrice">400</span> <span data-en="EGP">جنيه</span></span>
+        <span class="newprice"><b id="newPrice">200</b> <span id="curr" data-en="EGP">جنيه</span></span>
+      </div>
+    </div>
+    <div class="offer-cta">
+      <div class="countdown" aria-live="polite"><span class="cd-label" data-en="Offer ends in">ينتهي العرض خلال</span><span class="cd-time" id="cdTime" dir="ltr">04:59</span></div>
+      <a href="https://wa.me/201157717111" class="btn btn-primary btn-lg"><span data-en="Book now — save 200 EGP">احجز الآن — وفّر 200 جنيه</span></a>
+      <a href="tel:+201157717111" class="offer-call" data-en="or call +20 115 771 7111">أو اتصل: +20 115 771 7111</a>
+    </div>
+  </div>
+</div></section>
+
 <!-- SERVICES -->
 <section class="sec" id="services"><div class="wrap">
   <div class="center">
@@ -394,7 +434,7 @@
     <details open><summary><span data-en="How long does orthodontic treatment take?">كم تستغرق مدة علاج التقويم؟</span> <span class="plus">+</span></summary><p data-en="Duration varies by case and typically ranges from 12 to 24 months. After the exam and digital diagnosis, we give you an accurate estimate within your treatment plan.">تختلف المدة حسب طبيعة كل حالة، وغالبًا تتراوح بين 12 و24 شهرًا. بعد الفحص والتشخيص الرقمي نحدد لك مدة تقديرية دقيقة ضمن خطتك العلاجية.</p></details>
     <details><summary><span data-en="Is getting braces painful?">هل تركيب التقويم مؤلم؟</span> <span class="plus">+</span></summary><p data-en="Fitting the braces itself is not painful. You may feel mild pressure or sensitivity in the first few days after each visit — a normal feeling that fades quickly when you follow the instructions.">تركيب التقويم نفسه غير مؤلم، وقد تشعر بضغط بسيط أو حساسية خلال الأيام الأولى بعد كل زيارة، وهو أمر طبيعي يزول سريعًا مع اتباع التعليمات.</p></details>
     <details><summary><span data-en="What's the difference between metal and clear braces?">ما الفرق بين التقويم المعدني والشفاف؟</span> <span class="plus">+</span></summary><p data-en="Metal braces are effective, economical and suitable for most cases, while clear braces are less visible and better for those who prefer a discreet look. We recommend the most suitable option after assessing your case.">التقويم المعدني فعّال واقتصادي ومناسب لمعظم الحالات، بينما التقويم الشفاف أقل ظهورًا وأكثر ملاءمة لمن يفضّل مظهرًا غير ملحوظ. نرشّح لك الأنسب بعد تقييم حالتك.</p></details>
-    <details><summary><span data-en="How much does treatment cost?">ما تكلفة العلاج؟</span> <span class="plus">+</span></summary><p data-en="Cost depends on the type of braces, case complexity and treatment duration. We explain the cost transparently after the consultation and exam. [Add your price range or available installment plans]">تعتمد التكلفة على نوع التقويم وتعقيد الحالة ومدة العلاج. نوضّح لك التكلفة بشفافية بعد الاستشارة والفحص. [أضف نطاق الأسعار أو خطط التقسيط المتاحة]</p></details>
+    <details><summary><span data-en="How much does treatment cost?">ما تكلفة العلاج؟</span> <span class="plus">+</span></summary><p data-en="The consultation is currently 200 EGP (instead of 400 EGP) and includes a comprehensive exam and digital jaw assessment. Treatment cost then depends on the type of braces, case complexity and duration, and we explain it transparently after the exam — with flexible installment options.">الاستشارة حاليًا بـ 200 جنيه (بدلًا من 400 جنيه) وتشمل الفحص الشامل والتشخيص الرقمي للفكين. أما تكلفة العلاج فتعتمد على نوع التقويم وتعقيد الحالة ومدتها، ونوضّحها لك بشفافية بعد الفحص — مع إمكانية التقسيط.</p></details>
     <details><summary><span data-en="Can braces be done at any age?">هل يمكن عمل التقويم في أي عمر؟</span> <span class="plus">+</span></summary><p data-en="Yes — orthodontics suits children and adults alike, as long as the teeth and gums are healthy. Each age group has an appropriate treatment approach.">نعم، التقويم مناسب للأطفال والبالغين على حد سواء، طالما أن الأسنان واللثة بحالة صحية جيدة. لكل فئة عمرية أسلوب علاج ملائم.</p></details>
     <details><summary><span data-en="How does follow-up work between Cairo and Saudi Arabia?">كيف تتم المتابعة بين القاهرة والسعودية؟</span> <span class="plus">+</span></summary><p data-en="We arrange your appointments to fit your travel between both countries, with a flexible visit plan and continuous follow-up to keep treatment on track.">ننظّم مواعيدك بما يتناسب مع تنقّلك بين البلدين، مع خطة زيارات مرنة ومتابعة مستمرة لضمان سير العلاج دون انقطاع.</p></details>
   </div>
@@ -476,6 +516,7 @@
   // ---- apply editable content coming from content.json (or the admin preview) ----
   function applyContent(c){
     if(!c) return;
+    window.__content = c;
     if(c.hero){
       if(c.hero.title){ if($('heroTitleAr') && c.hero.title.ar!=null) $('heroTitleAr').textContent = c.hero.title.ar; if($('heroTitleEn') && c.hero.title.en!=null) $('heroTitleEn').textContent = c.hero.title.en; }
       if(c.hero.subtitle) txt($('heroSub'), c.hero.subtitle.ar, c.hero.subtitle.en);
@@ -535,7 +576,7 @@
     });
     window.addEventListener('message', function(e){
       var d = e.data || {};
-      if(d.type === 'content'){ applyContent(d.content); applyLang(curLang); }
+      if(d.type === 'content'){ applyContent(d.content); applyLang(curLang); initOffer(d.content); }
       else if(d.type === 'lang'){ applyLang(d.lang); }
       else if(d.type === 'highlight'){ var t = document.querySelector('[data-edit="'+d.key+'"]'); if(t){ t.scrollIntoView({behavior:'smooth', block:'center'}); t.style.outline='2px solid #B8934B'; setTimeout(function(){ t.style.outline=''; }, 1400); } }
     });
@@ -546,14 +587,44 @@
     var saved; try { saved = localStorage.getItem('lang'); } catch(e){}
     capture();
     applyLang(saved === 'en' ? 'en' : 'ar');
+    initOffer(window.__content || {});
     attachUI();
     if(isAdmin) enableAdmin();
   }
 
-  fetch('content.json', { cache: 'no-store' })
-    .then(function(r){ return r.ok ? r.json() : null; })
-    .then(function(c){ if(c) applyContent(c); boot(); })
-    .catch(function(){ boot(); });
+  // ---- limited-time offer + persistent countdown ----
+  function initOffer(c){
+    var o = (c && c.offer) || {};
+    var sec = $('offer');
+    if(sec && o.enabled === false){ sec.style.display = 'none'; return; }
+    if(sec) sec.style.display = '';
+    if(o.price!=null && $('newPrice')) $('newPrice').textContent = o.price;
+    if(o.oldPrice!=null && $('oldPrice')) $('oldPrice').textContent = o.oldPrice;
+    if(o.currency) txt($('curr'), o.currency.ar, o.currency.en);
+    if(o.headline) txt($('offerHead'), o.headline.ar, o.headline.en);
+    if(o.text) txt($('offerText'), o.text.ar, o.text.en);
+    startCountdown(parseInt(o.durationSec,10) || 299);
+  }
+  function startCountdown(dur){
+    var el = $('cdTime'); if(!el) return;
+    var KEY = 'offerDeadline', deadline;
+    try { deadline = parseInt(localStorage.getItem(KEY), 10); } catch(e){}
+    if(!deadline || isNaN(deadline)){ deadline = Date.now() + dur*1000; try{ localStorage.setItem(KEY, String(deadline)); }catch(e){} }
+    function tick(){
+      var rem = Math.max(0, Math.floor((deadline - Date.now())/1000));
+      var m = Math.floor(rem/60), s = rem % 60;
+      el.textContent = (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+      if(rem<=0 && window._cd){ clearInterval(window._cd); window._cd=null; }
+    }
+    tick(); if(window._cd) clearInterval(window._cd); window._cd = setInterval(tick, 1000);
+  }
+
+  function loadContent(){
+    return fetch('/api/content', { cache:'no-store' })
+      .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+      .catch(function(){ return fetch('content.json', { cache:'no-store' }).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }); });
+  }
+  loadContent().then(function(c){ if(c){ window.__content = c; applyContent(c); } boot(); });
 })();
 </script>
 </body>

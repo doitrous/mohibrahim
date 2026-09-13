@@ -115,7 +115,8 @@
   window.addEventListener('message',function(e){ var d=e.data||{}; if(d.type==='content'&&d.content){ DATA=d.content; render(); } else if(d.type==='doc'&&d.doc){ doc=d.doc; render(); } else if(d.type==='lang'){ lang=d.lang==='en'?'en':'ar'; render(); } });
   try{ parent.postMessage({type:'ready'},'*'); }catch(_){}
 
-  fetch('content.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(d){ DATA=d; render(); }).catch(function(){ render(); });
+  function loadContent(){ return fetch('/api/content',{cache:'no-store'}).then(function(r){ if(!r.ok) throw 0; return r.json(); }).catch(function(){ return fetch('content.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}); }); }
+  loadContent().then(function(d){ DATA=d; render(); });
 })();
 </script>
 </body>

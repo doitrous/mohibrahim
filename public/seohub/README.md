@@ -1,14 +1,26 @@
 # Binding this site to SEOHub
 
-This is a **static** site (GitHub Pages), not WordPress. SEOHub's WordPress adapter
-does not apply here — instead SEOHub binds by committing an articles file to this repo.
-GitHub Pages then serves it and `/seohub/` renders it.
+This site runs its own **Node backend** (`server.js`), so SEOHub binds over **HTTP**,
+exactly like an adapter — no GitHub commits involved. Articles are pushed to the
+site's API and stored server-side; `/seohub/` renders them from `/api/articles`.
 
-## The contract
+## The API contract (a `static`/`http` adapter on the hub)
 
-**File:** `seohub/articles.json` (repo root of the published site — i.e. this folder).
-**Shape:** a JSON array of article objects. One object **per language** (localize:`<lang>`
-steps each produce their own entry, same `slug`, different `lang`).
+Base URL = the deployed site (e.g. `https://mohibrahim.doitrous.com`).
+Auth = `Authorization: Bearer <HUB_TOKEN>` (the same `HUB_TOKEN` env you set on the site).
+
+```
+GET    /api/articles                 → the full array (public)
+POST   /api/articles                 → upsert one article or an array (Bearer HUB_TOKEN)
+DELETE /api/articles/:slug?lang=ar   → remove one (Bearer HUB_TOKEN)
+```
+
+`POST` upserts by (`slug` + `lang`). Send one object or an array of them.
+
+## Article shape
+
+One object **per language** (localize:`<lang>` steps each produce their own entry,
+same `slug`, different `lang`).
 
 ```json
 [
@@ -33,14 +45,10 @@ Markdown (`##`/`###` headings, `-` lists, `**bold**`, `[text](url)`).
 
 ## What the hub adapter needs to do
 
-A `static` / `github` adapter (analogous to the WordPress one) should, per publish:
-
-1. `GET  /repos/doitrous/mohibrahim/contents/seohub/articles.json` → read + `sha`.
-2. Upsert the article entries (by `slug`+`lang`).
-3. `PUT` the file back with the new content + `sha` (Contents API, Bearer token).
-
-GitHub Pages rebuilds automatically; the article appears at
-`/seohub/?slug=<slug>` and in the index at `/seohub/`.
+Add an adapter (analogous to the WordPress one) whose config is `{ baseUrl, hubToken }`
+and which, per publish, `POST`s the localized article object(s) to `POST {baseUrl}/api/articles`
+with the bearer token. The article appears immediately at `/seohub/?slug=<slug>` and in
+the index at `/seohub/`. No rebuild/commit needed.
 
 ## SEO plumbing already provided by the site (the WP plugin's job, done statically)
 

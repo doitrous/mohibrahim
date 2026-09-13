@@ -13,6 +13,15 @@
     "en": "[Add working hours — e.g. Sat–Thu, 4PM–10PM]"
   },
   "rating": "[4.9]",
+  "offer": {
+    "enabled": true,
+    "price": "200",
+    "oldPrice": "400",
+    "durationSec": 299,
+    "currency": { "ar": "جنيه", "en": "EGP" },
+    "headline": { "ar": "استشارتك الأولى بـ 200 جنيه فقط", "en": "Your first consultation for 200 EGP" },
+    "text": { "ar": "احجز الآن ووفّر 200 جنيه على استشارتك الأولى — فحص شامل وتشخيص رقمي للفكين وخطة علاج واضحة، مع ضمان استرداد الاستشارة.", "en": "Book now and save 200 EGP on your first consultation — a comprehensive exam, digital jaw assessment and a clear treatment plan, backed by our refund guarantee." }
+  },
   "seo": {
     "metaTitle": "",
     "metaDescription": "",

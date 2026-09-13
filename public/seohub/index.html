@@ -173,7 +173,8 @@
 
   document.getElementById('langtog').addEventListener('click',function(){ lang=lang==='en'?'ar':'en'; try{localStorage.setItem('lang',lang);}catch(e){} render(); });
 
-  fetch('articles.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():[];}).then(function(d){ ARTICLES=Array.isArray(d)?d:(d.articles||[]); render(); }).catch(function(){ render(); });
+  function loadArticles(){ return fetch('/api/articles',{cache:'no-store'}).then(function(r){ if(!r.ok) throw 0; return r.json(); }).catch(function(){ return fetch('articles.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}); }); }
+  loadArticles().then(function(d){ ARTICLES=Array.isArray(d)?d:(d.articles||[]); render(); });
 })();
 </script>
 </body>
