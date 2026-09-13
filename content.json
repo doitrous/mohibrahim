@@ -1,0 +1,95 @@
+{
+  "phone": "+20 115 771 7111",
+  "whatsapp": "201157717111",
+  "instagram": "https://instagram.com/diamond_.orthodontics",
+  "facebook": "",
+  "mapsQuery": "98 Mohi Aldin Abou Al Ezz St Dokki Giza",
+  "address": {
+    "ar": "98 شارع محي الدين أبو العز، الدقي، الجيزة 12611",
+    "en": "98 Mohi Aldin Abou Al Ezz St, Dokki, Giza 12611"
+  },
+  "hours": {
+    "ar": "[أضف مواعيد العمل — مثال: السبت–الخميس ٤م–١٠م]",
+    "en": "[Add working hours — e.g. Sat–Thu, 4PM–10PM]"
+  },
+  "rating": "[4.9]",
+  "seo": {
+    "metaTitle": "",
+    "metaDescription": "",
+    "verificationName": "",
+    "verificationContent": ""
+  },
+  "hero": {
+    "title": {
+      "ar": "ابتسامتك المثالية تبدأ بخطة مدروسة",
+      "en": "Your perfect smile begins with a precise plan"
+    },
+    "subtitle": {
+      "ar": "مع د. محمد إبراهيم شلبي — استشاري تقويم الأسنان بخبرة تتجاوز 15 عامًا وأكثر من 1000 ابتسامة تم تصحيحها. نبدأ رحلتك بفحص شامل وتشخيص رقمي دقيق للفكين، ثم خطة علاج واضحة تصل بك إلى النتيجة التي تستحقها.",
+      "en": "With Dr. Mohamed Ibrahim Shalaby — a consultant orthodontist with over 15 years of experience and more than 1,000 smiles corrected. We begin with a thorough exam and precise digital jaw assessment, then a clear treatment plan that leads you to the result you deserve."
+    }
+  },
+  "stats": [
+    { "n": "+1000" },
+    { "n": "15" },
+    { "n": "2" },
+    { "n": "100%" }
+  ],
+  "guarantee": {
+    "title": {
+      "ar": "ضمان استرداد مبلغ الاستشارة كاملًا",
+      "en": "Full consultation fee refund"
+    },
+    "body": {
+      "ar": "نحن واثقون من قيمة استشارتك — إذا لم تستفد من زيارتك الأولى، نعيد لك مبلغ الاستشارة بالكامل. لأن ثقتك تبدأ من أول لقاء.",
+      "en": "We are confident in the value of your consultation — if you don't benefit from your first visit, we refund the consultation fee in full. Because your trust begins at the very first meeting."
+    }
+  },
+  "reviews": [
+    {
+      "text": {
+        "ar": "«من أول استشارة حسّيت بالفرق — شرح واضح لكل خطوة وخطة علاج مريحة. النتيجة فاقت توقعاتي.»",
+        "en": "“From the first consultation I felt the difference — every step clearly explained and a comfortable plan. The result exceeded my expectations.”"
+      },
+      "name": { "ar": "[اسم المريض]", "en": "[Patient name]" }
+    },
+    {
+      "text": {
+        "ar": "«دكتور محترم وصبور، جاوب على كل أسئلتي وطمّنّي. التصوير الرقمي خلّاني أفهم حالتي بالظبط.»",
+        "en": "“A respectful and patient doctor who answered all my questions and reassured me. The digital imaging helped me understand my case exactly.”"
+      },
+      "name": { "ar": "[اسم المريض]", "en": "[Patient name]" }
+    },
+    {
+      "text": {
+        "ar": "«متابعة ممتازة بين مصر والسعودية، والمواعيد منظمة. أنصح بيه لأي حد بيدوّر على تقويم بخطة واضحة.»",
+        "en": "“Excellent follow-up between Egypt and Saudi Arabia, and well-organized appointments. Highly recommended for anyone seeking braces with a clear plan.”"
+      },
+      "name": { "ar": "[اسم المريض]", "en": "[Patient name]" }
+    }
+  ],
+  "legal": {
+    "updated": { "ar": "آخر تحديث: سبتمبر 2026", "en": "Last updated: September 2026" },
+    "privacy": {
+      "title": { "ar": "سياسة الخصوصية", "en": "Privacy Policy" },
+      "body": {
+        "ar": "## مقدمة\nتحترم عيادة د. محمد إبراهيم شلبي خصوصيتك. يوضّح هذا الإشعار كيفية جمعنا واستخدامنا وحمايتنا لبياناتك عند زيارتك لموقعنا الإلكتروني أو العيادة.\n\n## البيانات التي نجمعها\nقد نجمع اسمك ورقم هاتفك وبريدك الإلكتروني ورسائلك عبر واتساب أو نموذج التواصل، بالإضافة إلى البيانات الطبية التي تُجمع أثناء الكشف والعلاج داخل العيادة.\n\n## كيف نستخدم بياناتك\nنستخدم بياناتك لتحديد المواعيد وتقديم الرعاية والرد على استفساراتك وتحسين خدماتنا. لا نبيع بياناتك أو نؤجّرها لأي طرف ثالث.\n\n## ملفات تعريف الارتباط والتخزين المحلي\nيستخدم هذا الموقع التخزين المحلي (localStorage) لتذكّر تفضيل اللغة فقط، ولا يستخدم أدوات تتبّع إعلانية.\n\n## حماية البيانات\nنتخذ إجراءات تنظيمية وتقنية معقولة لحماية بياناتك، وتظل سجلاتك الطبية سرية وفق الأصول المهنية والقوانين المعمول بها.\n\n## حقوقك\nيحق لك طلب الاطلاع على بياناتك أو تصحيحها أو حذفها من خلال التواصل معنا عبر بيانات الاتصال الموضحة في الموقع.\n\n## التواصل\nلأي استفسار بخصوص الخصوصية يمكنك التواصل عبر الهاتف أو واتساب الموضح في صفحة التواصل.\n\n[هذه الوثيقة نموذج استرشادي — يُنصح بمراجعتها من مختص قانوني قبل الاعتماد.]",
+        "en": "## Introduction\nDr. Mohamed Ibrahim Shalaby's clinic respects your privacy. This notice explains how we collect, use and protect your information when you visit our website or clinic.\n\n## Information We Collect\nWe may collect your name, phone number, email and the messages you send via WhatsApp or the contact form, in addition to the medical information gathered during examination and treatment at the clinic.\n\n## How We Use Your Information\nWe use your information to schedule appointments, provide care, respond to your enquiries and improve our services. We never sell or rent your data to any third party.\n\n## Cookies & Local Storage\nThis website uses local storage only to remember your language preference. It does not use advertising trackers.\n\n## Data Protection\nWe take reasonable organisational and technical measures to protect your data, and your medical records remain confidential in line with professional standards and applicable law.\n\n## Your Rights\nYou may request access to, correction of, or deletion of your data by contacting us using the details shown on the site.\n\n## Contact\nFor any privacy enquiry, reach us via the phone or WhatsApp shown on the contact section.\n\n[This document is a template — please have it reviewed by a legal professional before relying on it.]"
+      }
+    },
+    "terms": {
+      "title": { "ar": "الشروط والأحكام", "en": "Terms & Conditions" },
+      "body": {
+        "ar": "## قبول الشروط\nباستخدامك لهذا الموقع فإنك توافق على هذه الشروط والأحكام.\n\n## طبيعة المحتوى\nالمعلومات المنشورة على الموقع لأغراض التوعية العامة ولا تُغني عن الاستشارة الطبية المتخصصة داخل العيادة.\n\n## المواعيد والحجز\nتتم المواعيد عبر واتساب أو الهاتف. نحرص على الالتزام بالمواعيد، وقد تطرأ تغييرات طارئة يتم إبلاغك بها في أقرب وقت.\n\n## ضمان استرداد الاستشارة\nنوفّر ضمان استرداد مبلغ الاستشارة كاملًا في حال عدم الاستفادة من الزيارة الأولى، وفق الشروط الموضحة داخل العيادة.\n\n## الملكية الفكرية\nجميع النصوص والصور والشعارات المعروضة مملوكة للعيادة، ولا يجوز نسخها أو استخدامها دون إذن كتابي مسبق.\n\n## صور الحالات\nتُنشر صور الحالات (قبل / بعد) بعد الحصول على موافقة المريض، وتظل ملكية العيادة.\n\n## تحديث الشروط\nقد نُحدّث هذه الشروط من وقت لآخر، ويسري التحديث فور نشره على الموقع.\n\n[نموذج استرشادي — يُنصح بمراجعته قانونيًا قبل الاعتماد.]",
+        "en": "## Acceptance of Terms\nBy using this website you agree to these terms and conditions.\n\n## Nature of Content\nThe information published on the site is for general awareness and does not replace specialist medical consultation at the clinic.\n\n## Appointments & Booking\nAppointments are made via WhatsApp or phone. We do our best to honour scheduled times; occasional changes may occur and you will be notified as soon as possible.\n\n## Consultation Refund Guarantee\nWe offer a full refund of the consultation fee if you do not benefit from your first visit, subject to the conditions explained at the clinic.\n\n## Intellectual Property\nAll text, images and logos shown are owned by the clinic and may not be copied or used without prior written permission.\n\n## Case Photos\nBefore / after case photos are published after obtaining patient consent and remain the property of the clinic.\n\n## Updates to Terms\nWe may update these terms from time to time; changes take effect once published on the site.\n\n[This is a template — please have it reviewed by a legal professional before relying on it.]"
+      }
+    },
+    "disclaimer": {
+      "title": { "ar": "إخلاء المسؤولية الطبية", "en": "Medical Disclaimer" },
+      "body": {
+        "ar": "## إخلاء المسؤولية الطبية\nالمحتوى المقدَّم على هذا الموقع لأغراض تعليمية وتوعوية عامة فقط، ولا يُعدّ تشخيصًا طبيًا أو وصفة علاجية.\n\n## استشر طبيبك\nلا تعتمد على معلومات الموقع بديلاً عن الكشف والاستشارة المباشرة؛ فكل حالة تختلف عن الأخرى وتحتاج تقييمًا خاصًا.\n\n## اختلاف النتائج\nتختلف نتائج علاج تقويم الأسنان من شخص لآخر حسب طبيعة الحالة والالتزام بالتعليمات. الصور المعروضة لحالات فعلية ولا تضمن الحصول على نتيجة مطابقة.\n\n## الطوارئ\nفي حالات الطوارئ الطبية يُرجى التوجه لأقرب مستشفى أو الاتصال بخدمات الطوارئ فورًا.",
+        "en": "## Medical Disclaimer\nThe content on this website is provided for general educational and awareness purposes only and does not constitute a medical diagnosis or treatment prescription.\n\n## Consult Your Doctor\nDo not rely on the site's information as a substitute for an in-person examination and consultation; every case is different and needs individual assessment.\n\n## Results Vary\nOrthodontic treatment results vary from person to person depending on the case and adherence to instructions. The photos shown are of real cases and do not guarantee an identical result.\n\n## Emergencies\nIn a medical emergency, please go to the nearest hospital or call emergency services immediately."
+      }
+    }
+  }
+}

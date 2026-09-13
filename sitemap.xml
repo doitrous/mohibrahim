@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://doitrous.github.io/mohibrahim/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://doitrous.github.io/mohibrahim/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://doitrous.github.io/mohibrahim/"/>
+    <changefreq>monthly</changefreq><priority>1.0</priority>
+  </url>
+  <url><loc>https://doitrous.github.io/mohibrahim/seohub/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://doitrous.github.io/mohibrahim/legal.html?doc=privacy</loc><priority>0.3</priority></url>
+  <url><loc>https://doitrous.github.io/mohibrahim/legal.html?doc=terms</loc><priority>0.3</priority></url>
+  <url><loc>https://doitrous.github.io/mohibrahim/legal.html?doc=disclaimer</loc><priority>0.3</priority></url>
+</urlset>

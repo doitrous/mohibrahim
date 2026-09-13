@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin — Dr. Mohamed Shalaby</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 40 13V26C40 36 33 43 24 45 15 43 8 36 8 26V13Z' fill='%231C2A44'/%3E%3Ccircle cx='34' cy='13' r='3' fill='%23B8934B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+  :root{--ink:#1C2A44;--gold:#B8934B;--gold2:#9A7734;--paper:#F4F5F7;--surface:#fff;--line:#E2E5EC;--muted:#6B7280;--ok:#2F8F5B;--err:#C4463C;--body:'IBM Plex Sans','IBM Plex Sans Arabic',system-ui,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--body);background:var(--paper);color:var(--ink);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  header.top{display:flex;align-items:center;gap:16px;padding:0 18px;height:60px;background:var(--ink);color:#fff;flex:0 0 auto}
+  header.top .logo{font-weight:700;font-size:16px;display:flex;align-items:center;gap:10px}
+  header.top .sub{font-size:11px;letter-spacing:.12em;color:#B8934B;font-weight:600}
+  .grow{flex:1}
+  .status{font-size:13px;color:#C7D0E2}
+  .status.dirty{color:#F0C674}.status.ok{color:#7FD19B}.status.err{color:#F0A199}
+  .btn{border:0;border-radius:9px;padding:9px 15px;font-family:var(--body);font-weight:600;font-size:13.5px;cursor:pointer}
+  .btn-gold{background:var(--gold);color:#1C2A44}.btn-gold:hover{background:#caa85c}
+  .btn-line{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28)}.btn-line:hover{border-color:#fff}
+  main{flex:1;display:grid;grid-template-columns:minmax(360px,42%) 1fr;min-height:0}
+  /* left editor */
+  .editor{display:flex;flex-direction:column;min-height:0;border-inline-end:1px solid var(--line);background:var(--surface)}
+  .tabs{display:flex;gap:4px;padding:10px 12px;border-bottom:1px solid var(--line);flex:0 0 auto;overflow-x:auto}
+  .tabs button{border:0;background:transparent;padding:8px 13px;border-radius:8px;font-family:var(--body);font-weight:600;font-size:13.5px;color:var(--muted);cursor:pointer;white-space:nowrap}
+  .tabs button.active{background:var(--ink);color:#fff}
+  .panels{overflow:auto;padding:20px 22px;flex:1}
+  .panel{display:none}.panel.active{display:block}
+  .fld{margin-bottom:16px}
+  .fld label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:5px}
+  .fld input,.fld textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-family:var(--body);font-size:14px;color:var(--ink);background:#fff;resize:vertical}
+  .fld input:focus,.fld textarea:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+  .fld textarea{min-height:70px;line-height:1.6}
+  .fld .rtl{direction:rtl;text-align:right}
+  .fld.flash input,.fld.flash textarea{outline:2px solid var(--gold);border-color:var(--gold)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grp{border:1px solid var(--line);border-radius:12px;padding:14px 14px 2px;margin-bottom:18px}
+  .grp h4{margin:0 0 12px;font-size:13px;color:var(--ink);font-weight:700}
+  .hint{font-size:12px;color:var(--muted);margin:-6px 0 14px}
+  .tag{display:inline-block;font-size:11px;font-weight:600;color:var(--gold2);background:#F6EEDC;border-radius:6px;padding:2px 7px;margin-inline-start:6px}
+  /* right preview */
+  .preview{display:flex;flex-direction:column;min-height:0;background:#eceef2}
+  .pvbar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--surface);flex:0 0 auto;flex-wrap:wrap}
+  .pvbar select,.pvbar .seg{border:1px solid var(--line);border-radius:8px;font-family:var(--body);font-size:13px;background:#fff}
+  .pvbar select{padding:7px 10px}
+  .seg{display:inline-flex;overflow:hidden}
+  .seg button{border:0;background:#fff;padding:7px 12px;font-family:var(--body);font-size:13px;cursor:pointer;color:var(--muted)}
+  .seg button.active{background:var(--ink);color:#fff}
+  .pvhint{font-size:12px;color:var(--muted)}
+  .frame{flex:1;overflow:auto;display:flex;justify-content:center;padding:18px}
+  .frame iframe{width:100%;max-width:1280px;height:100%;min-height:1400px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:0 10px 30px -18px rgba(0,0,0,.3)}
+  .frame.mobile iframe{max-width:390px}
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(20,31,53,.5);display:none;align-items:center;justify-content:center;z-index:50}
+  .modal.open{display:flex}
+  .card{background:#fff;border-radius:16px;padding:26px;max-width:480px;width:calc(100% - 40px);box-shadow:0 30px 70px -30px rgba(0,0,0,.5)}
+  .card h3{margin:0 0 6px}.card p{margin:0 0 16px;color:var(--muted);font-size:14px;line-height:1.6}
+  .card a{color:var(--gold2)}
+  .msg{font-size:13px;margin-top:10px}
+  @media(max-width:900px){ main{grid-template-columns:1fr;grid-template-rows:1fr 1fr} .editor{border-inline-end:0;border-bottom:1px solid var(--line)} }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">🦷 Dr. Shalaby <span class="sub">CONTENT ADMIN</span></div>
+  <div class="grow"></div>
+  <div class="status" id="status">Loading…</div>
+  <button class="btn btn-line" id="revertBtn" title="Discard local edits">Revert</button>
+  <button class="btn btn-line" id="downloadBtn">Download JSON</button>
+  <button class="btn btn-line" id="tokenBtn">GitHub token</button>
+  <button class="btn btn-gold" id="publishBtn">Publish</button>
+</header>
+
+<main>
+  <section class="editor">
+    <div class="tabs" id="tabs"></div>
+    <div class="panels" id="panels"></div>
+  </section>
+  <section class="preview">
+    <div class="pvbar">
+      <select id="pvPage" title="Preview page">
+        <option value="home">Home page</option>
+        <option value="privacy">Legal · Privacy</option>
+        <option value="terms">Legal · Terms</option>
+        <option value="disclaimer">Legal · Disclaimer</option>
+      </select>
+      <div class="seg" id="pvLang"><button data-l="ar" class="active">ع</button><button data-l="en">EN</button></div>
+      <div class="seg" id="pvDev"><button data-d="desktop" class="active">Desktop</button><button data-d="mobile">Mobile</button></div>
+      <span class="pvhint">Tip: click any text in the preview to jump to its field.</span>
+    </div>
+    <div class="frame" id="frame"><iframe id="pv" title="Live preview"></iframe></div>
+  </section>
+</main>
+
+<div class="modal" id="tokenModal"><div class="card">
+  <h3>GitHub token</h3>
+  <p>Publishing commits <code>content.json</code> to <b>doitrous/mohibrahim</b> so the live site updates.
+  Create a <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener">fine-grained token</a>
+  scoped to that repo with <b>Contents: Read and write</b>. It is stored only in this browser.</p>
+  <div class="fld"><label>Personal access token</label><input type="password" id="tokenInput" placeholder="github_pat_…"></div>
+  <div style="display:flex;gap:10px;justify-content:flex-end">
+    <button class="btn btn-line" style="color:var(--ink);border-color:var(--line)" id="tokenCancel">Cancel</button>
+    <button class="btn btn-gold" id="tokenSave">Save</button>
+  </div>
+  <div class="msg" id="tokenMsg"></div>
+</div></div>
+
+<script>
+(function(){
+  var REPO='doitrous/mohibrahim', BRANCH='main', FILE='content.json';
+  var DRAFT_KEY='seohub_admin_draft', TOKEN_KEY='seohub_admin_gh';
+  var data=null, published=null, dirty=false, pvReady=false, curPage='home', pvLang='ar';
+
+  var el=function(id){return document.getElementById(id);};
+  function getPath(o,p){return p.split('.').reduce(function(a,k){return a==null?a:a[k];},o);}
+  function setPath(o,p,v){var ks=p.split('.'),last=ks.pop(),t=o;ks.forEach(function(k){if(t[k]==null)t[k]={};t=t[k];});t[last]=v;}
+  function idOf(p){return 'f-'+p.replace(/\./g,'-');}
+
+  // ---- field spec ----
+  var STATLBL=['Smiles number','Years number','Clinics number','Refund number'];
+  var FIELDS=[
+    // Content
+    {tab:'Content',grp:'Hero',path:'hero.title.ar',label:'Headline (Arabic)',rtl:1},
+    {tab:'Content',grp:'Hero',path:'hero.title.en',label:'Headline (English)'},
+    {tab:'Content',grp:'Hero',path:'hero.subtitle.ar',label:'Sub-headline (Arabic)',ta:1,rtl:1},
+    {tab:'Content',grp:'Hero',path:'hero.subtitle.en',label:'Sub-headline (English)',ta:1},
+    {tab:'Content',grp:'Stats band',path:'stats.0.n',label:STATLBL[0],half:1},
+    {tab:'Content',grp:'Stats band',path:'stats.1.n',label:STATLBL[1],half:1},
+    {tab:'Content',grp:'Stats band',path:'stats.2.n',label:STATLBL[2],half:1},
+    {tab:'Content',grp:'Stats band',path:'stats.3.n',label:STATLBL[3],half:1},
+    {tab:'Content',grp:'Guarantee',path:'guarantee.title.ar',label:'Title (Arabic)',rtl:1},
+    {tab:'Content',grp:'Guarantee',path:'guarantee.title.en',label:'Title (English)'},
+    {tab:'Content',grp:'Guarantee',path:'guarantee.body.ar',label:'Body (Arabic)',ta:1,rtl:1},
+    {tab:'Content',grp:'Guarantee',path:'guarantee.body.en',label:'Body (English)',ta:1},
+    // Contact
+    {tab:'Contact',grp:'Phone & WhatsApp',path:'phone',label:'Phone (display)',half:1},
+    {tab:'Contact',grp:'Phone & WhatsApp',path:'whatsapp',label:'WhatsApp number (digits only)',half:1},
+    {tab:'Contact',grp:'Address',path:'address.ar',label:'Address (Arabic)',rtl:1},
+    {tab:'Contact',grp:'Address',path:'address.en',label:'Address (English)'},
+    {tab:'Contact',grp:'Address',path:'mapsQuery',label:'Google Maps search query'},
+    {tab:'Contact',grp:'Working hours',path:'hours.ar',label:'Hours (Arabic)',rtl:1},
+    {tab:'Contact',grp:'Working hours',path:'hours.en',label:'Hours (English)'},
+    {tab:'Contact',grp:'Social links',path:'instagram',label:'Instagram URL',half:1},
+    {tab:'Contact',grp:'Social links',path:'facebook',label:'Facebook URL',half:1},
+    // Reviews
+    {tab:'Reviews',grp:'Overall',path:'rating',label:'Rating badge (e.g. 4.9)'},
+    {tab:'Reviews',grp:'Review 1',path:'reviews.0.text.ar',label:'Text (Arabic)',ta:1,rtl:1},
+    {tab:'Reviews',grp:'Review 1',path:'reviews.0.text.en',label:'Text (English)',ta:1},
+    {tab:'Reviews',grp:'Review 1',path:'reviews.0.name.ar',label:'Name (Arabic)',half:1,rtl:1},
+    {tab:'Reviews',grp:'Review 1',path:'reviews.0.name.en',label:'Name (English)',half:1},
+    {tab:'Reviews',grp:'Review 2',path:'reviews.1.text.ar',label:'Text (Arabic)',ta:1,rtl:1},
+    {tab:'Reviews',grp:'Review 2',path:'reviews.1.text.en',label:'Text (English)',ta:1},
+    {tab:'Reviews',grp:'Review 2',path:'reviews.1.name.ar',label:'Name (Arabic)',half:1,rtl:1},
+    {tab:'Reviews',grp:'Review 2',path:'reviews.1.name.en',label:'Name (English)',half:1},
+    {tab:'Reviews',grp:'Review 3',path:'reviews.2.text.ar',label:'Text (Arabic)',ta:1,rtl:1},
+    {tab:'Reviews',grp:'Review 3',path:'reviews.2.text.en',label:'Text (English)',ta:1},
+    {tab:'Reviews',grp:'Review 3',path:'reviews.2.name.ar',label:'Name (Arabic)',half:1,rtl:1},
+    {tab:'Reviews',grp:'Review 3',path:'reviews.2.name.en',label:'Name (English)',half:1},
+    // SEO
+    {tab:'SEO',grp:'Meta',path:'seo.metaTitle',label:'Meta title (blank = default)'},
+    {tab:'SEO',grp:'Meta',path:'seo.metaDescription',label:'Meta description',ta:1},
+    {tab:'SEO',grp:'Site verification (SEOHub / Search Console)',path:'seo.verificationName',label:'Meta name (e.g. google-site-verification)',half:1},
+    {tab:'SEO',grp:'Site verification (SEOHub / Search Console)',path:'seo.verificationContent',label:'Meta content (token)',half:1},
+    // Legal
+    {tab:'Legal',grp:'General',path:'legal.updated.ar',label:'“Last updated” (Arabic)',half:1,rtl:1},
+    {tab:'Legal',grp:'General',path:'legal.updated.en',label:'“Last updated” (English)',half:1},
+    {tab:'Legal',grp:'Privacy Policy',path:'legal.privacy.title.ar',label:'Title (Arabic)',half:1,rtl:1},
+    {tab:'Legal',grp:'Privacy Policy',path:'legal.privacy.title.en',label:'Title (English)',half:1},
+    {tab:'Legal',grp:'Privacy Policy',path:'legal.privacy.body.ar',label:'Body (Arabic) — use ## for headings',ta:1,rtl:1,big:1},
+    {tab:'Legal',grp:'Privacy Policy',path:'legal.privacy.body.en',label:'Body (English) — use ## for headings',ta:1,big:1},
+    {tab:'Legal',grp:'Terms & Conditions',path:'legal.terms.title.ar',label:'Title (Arabic)',half:1,rtl:1},
+    {tab:'Legal',grp:'Terms & Conditions',path:'legal.terms.title.en',label:'Title (English)',half:1},
+    {tab:'Legal',grp:'Terms & Conditions',path:'legal.terms.body.ar',label:'Body (Arabic)',ta:1,rtl:1,big:1},
+    {tab:'Legal',grp:'Terms & Conditions',path:'legal.terms.body.en',label:'Body (English)',ta:1,big:1},
+    {tab:'Legal',grp:'Medical Disclaimer',path:'legal.disclaimer.title.ar',label:'Title (Arabic)',half:1,rtl:1},
+    {tab:'Legal',grp:'Medical Disclaimer',path:'legal.disclaimer.title.en',label:'Title (English)',half:1},
+    {tab:'Legal',grp:'Medical Disclaimer',path:'legal.disclaimer.body.ar',label:'Body (Arabic)',ta:1,rtl:1,big:1},
+    {tab:'Legal',grp:'Medical Disclaimer',path:'legal.disclaimer.body.en',label:'Body (English)',ta:1,big:1}
+  ];
+  var TABS=['Content','Contact','Reviews','SEO','Legal'];
+  var EDITKEY_TAB={ 'hero.title':'Content','hero.subtitle':'Content','stats.0.n':'Content','stats.1.n':'Content','stats.2.n':'Content','stats.3.n':'Content','guarantee.title':'Content','guarantee.body':'Content','rating':'Reviews','address':'Contact','hours':'Contact','phone':'Contact','whatsapp':'Contact','instagram':'Contact','facebook':'Contact' };
+
+  function buildForm(){
+    var tabsEl=el('tabs'), panelsEl=el('panels');
+    tabsEl.innerHTML=''; panelsEl.innerHTML='';
+    TABS.forEach(function(t,i){
+      var b=document.createElement('button'); b.textContent=t; b.className=i===0?'active':''; b.onclick=function(){activateTab(t);}; b.dataset.tab=t; tabsEl.appendChild(b);
+      var panel=document.createElement('div'); panel.className='panel'+(i===0?' active':''); panel.dataset.tab=t; panelsEl.appendChild(panel);
+    });
+    if(el('panels').querySelector('[data-tab="SEO"]')){
+      var note=document.createElement('div'); note.className='hint'; note.textContent='These feed <title>, meta description and a verification tag on the live pages.';
+      el('panels').querySelector('[data-tab="SEO"]').appendChild(note);
+    }
+    // group + fields
+    var groups={};
+    FIELDS.forEach(function(f){
+      var panel=panelsEl.querySelector('[data-tab="'+f.tab+'"]');
+      var gk=f.tab+'|'+f.grp;
+      if(!groups[gk]){ var g=document.createElement('div'); g.className='grp'; g.innerHTML='<h4>'+f.grp+'</h4>'; panel.appendChild(g); groups[gk]=g; }
+      var wrap=document.createElement('div'); wrap.className='fld'+(f.half?' half':''); wrap.id='w-'+idOf(f.path);
+      var lab=document.createElement('label'); lab.textContent=f.label; wrap.appendChild(lab);
+      var inp=f.ta?document.createElement('textarea'):document.createElement('input');
+      inp.id=idOf(f.path); if(f.rtl) inp.className='rtl'; if(f.big) inp.style.minHeight='220px';
+      inp.value=getPath(data,f.path)||'';
+      inp.addEventListener('input',function(){ setPath(data,f.path,inp.value); onChange(f.path); });
+      wrap.appendChild(inp);
+      // pack halves into a row
+      if(f.half){ var last=groups[gk].lastElementChild; if(last&&last.classList.contains('row2')&&last.children.length<2){ last.appendChild(wrap); } else { var r=document.createElement('div'); r.className='row2'; r.appendChild(wrap); groups[gk].appendChild(r); } }
+      else groups[gk].appendChild(wrap);
+    });
+  }
+
+  function activateTab(t){
+    Array.prototype.forEach.call(el('tabs').children,function(b){ b.classList.toggle('active', b.dataset.tab===t); });
+    Array.prototype.forEach.call(el('panels').children,function(p){ if(p.dataset&&p.dataset.tab!=null) p.classList.toggle('active', p.dataset.tab===t); });
+  }
+
+  function sendToPreview(){ var f=el('pv'); if(f&&f.contentWindow){ f.contentWindow.postMessage({type:'content',content:data},'*'); f.contentWindow.postMessage({type:'lang',lang:pvLang},'*'); } }
+  function onChange(path){ dirty=true; setStatus(); try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(data)); }catch(e){} sendToPreview(); }
+  function setStatus(txt,cls){ var s=el('status'); if(txt){ s.textContent=txt; s.className='status '+(cls||''); return; } s.textContent=dirty?'Unsaved changes':'All changes saved'; s.className='status '+(dirty?'dirty':'ok'); }
+
+  // ---- preview page switching ----
+  function pageUrl(p){ if(p==='home') return '../index.html?admin=1'; return '../legal.html?admin=1&doc='+p; }
+  function loadPreview(){ pvReady=false; el('pv').src=pageUrl(curPage); }
+  el('pvPage').addEventListener('change',function(){ curPage=this.value; loadPreview(); });
+  Array.prototype.forEach.call(el('pvLang').children,function(b){ b.onclick=function(){ pvLang=b.dataset.l; Array.prototype.forEach.call(el('pvLang').children,function(x){x.classList.toggle('active',x===b);}); var f=el('pv'); if(f&&f.contentWindow) f.contentWindow.postMessage({type:'lang',lang:pvLang},'*'); }; });
+  Array.prototype.forEach.call(el('pvDev').children,function(b){ b.onclick=function(){ el('frame').classList.toggle('mobile', b.dataset.d==='mobile'); Array.prototype.forEach.call(el('pvDev').children,function(x){x.classList.toggle('active',x===b);}); }; });
+
+  window.addEventListener('message',function(e){
+    var d=e.data||{};
+    if(d.type==='ready'){ pvReady=true; sendToPreview(); if(curPage!=='home'){ el('pv').contentWindow.postMessage({type:'doc',doc:curPage},'*'); } }
+    else if(d.type==='edit'){ focusField(d.key); }
+  });
+
+  function focusField(key){
+    var tab=EDITKEY_TAB[key]||null;
+    // resolve a concrete field id (object-level keys -> .ar)
+    var target=el(idOf(key)) || el(idOf(key+'.ar'));
+    if(!target){ // try prefix match
+      var all=document.querySelectorAll('[id^="f-'+key.replace(/\./g,'-')+'"]'); if(all.length) target=all[0];
+    }
+    if(!tab){ // infer tab from field
+      var f=FIELDS.filter(function(x){return x.path===key||x.path.indexOf(key+'.')===0;})[0]; if(f) tab=f.tab;
+    }
+    if(tab) activateTab(tab);
+    if(target){ var w=document.getElementById('w-'+target.id.slice(2)); if(w){ w.classList.add('flash'); setTimeout(function(){w.classList.remove('flash');},1300);} target.scrollIntoView({behavior:'smooth',block:'center'}); target.focus(); }
+  }
+
+  // ---- top bar actions ----
+  el('downloadBtn').onclick=function(){ var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='content.json'; document.body.appendChild(a); a.click(); a.remove(); };
+  el('revertBtn').onclick=function(){ if(!confirm('Discard local edits and reload the published content?')) return; try{localStorage.removeItem(DRAFT_KEY);}catch(e){} location.reload(); };
+
+  // token modal
+  function getToken(){ try{return localStorage.getItem(TOKEN_KEY)||'';}catch(e){return '';} }
+  el('tokenBtn').onclick=function(){ el('tokenInput').value=getToken(); el('tokenMsg').textContent=''; el('tokenModal').classList.add('open'); };
+  el('tokenCancel').onclick=function(){ el('tokenModal').classList.remove('open'); };
+  el('tokenSave').onclick=function(){ try{localStorage.setItem(TOKEN_KEY, el('tokenInput').value.trim());}catch(e){} el('tokenModal').classList.remove('open'); };
+
+  function b64(str){ return btoa(unescape(encodeURIComponent(str))); }
+  function hdr(t){ return {'Authorization':'Bearer '+t,'Accept':'application/vnd.github+json','Content-Type':'application/json'}; }
+  el('publishBtn').onclick=function(){ publish(); };
+  function publish(){
+    var token=getToken(); if(!token){ el('tokenBtn').click(); return; }
+    setStatus('Publishing…','');
+    var api='https://api.github.com/repos/'+REPO+'/contents/'+FILE;
+    fetch(api+'?ref='+BRANCH,{headers:hdr(token)}).then(function(r){
+      if(r.status===200) return r.json().then(function(j){return j.sha;});
+      if(r.status===404) return null;
+      return r.text().then(function(t){ throw new Error('Read '+r.status+': '+t); });
+    }).then(function(sha){
+      var body={message:'Update site content via /admin',content:b64(JSON.stringify(data,null,2)),branch:BRANCH};
+      if(sha) body.sha=sha;
+      return fetch(api,{method:'PUT',headers:hdr(token),body:JSON.stringify(body)});
+    }).then(function(r){
+      if(!r.ok) return r.text().then(function(t){ throw new Error('Publish '+r.status+': '+t); });
+      published=JSON.parse(JSON.stringify(data)); dirty=false; try{localStorage.removeItem(DRAFT_KEY);}catch(e){}
+      setStatus('Published ✓ — live in ~1 min','ok');
+    }).catch(function(err){ setStatus('Error: '+err.message.slice(0,120),'err'); });
+  }
+
+  window.addEventListener('beforeunload',function(e){ if(dirty){ e.preventDefault(); e.returnValue=''; } });
+
+  // ---- boot ----
+  fetch('../content.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():{};}).then(function(pub){
+    published=pub||{}; data=JSON.parse(JSON.stringify(published));
+    var draft=null; try{ draft=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null'); }catch(e){}
+    if(draft){ data=draft; dirty=true; }
+    buildForm(); setStatus(); loadPreview();
+  }).catch(function(){ data={}; buildForm(); setStatus('Could not load content.json','err'); loadPreview(); });
+})();
+</script>
+</body>
+</html>
