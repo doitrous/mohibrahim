@@ -207,10 +207,10 @@
     var w=c.whatsapp?String(c.whatsapp).replace(/\D/g,''):''; if(w) $('waBtn').href='https://wa.me/'+w;
   });
 
-  // gate on payment availability
+  // keep the amount in sync with the gateway; the form always shows and degrades
+  // gracefully to the WhatsApp fallback on submit if the gateway is not configured yet.
   fetch('/api/pay/config',{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
-    if(j&&j.enabled){ if(j.amount!=null)$('priceNow').textContent=num(j.amount); }
-    else { $('payForm').hidden=true; $('waFallback').hidden=false; }
+    if(j&&j.enabled&&j.amount!=null) $('priceNow').textContent=num(j.amount);
   }).catch(function(){});
 
   $('payForm').addEventListener('submit',function(e){
