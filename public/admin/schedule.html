@@ -85,6 +85,12 @@
       <div class="row" style="gap:22px">
         <div><label class="lbl">Slot length (minutes)</label><input type="number" id="slotMinutes" min="5" max="240" step="5" style="width:110px"></div>
         <div><label class="lbl">Capacity per slot</label><input type="number" id="capacity" min="1" max="20" style="width:110px"></div>
+        <div><label class="lbl">Require payment to book</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;height:38px">
+            <input type="checkbox" id="requirePayment" style="width:18px;height:18px">
+            <span id="reqPayLabel" class="hint" style="margin:0">On — patient pays online to confirm</span>
+          </label>
+        </div>
       </div>
       <div class="row" style="gap:14px;margin-top:14px">
         <div style="flex:1;min-width:220px"><label class="lbl">Note to patients (Arabic)</label><input type="text" id="noteAr" class="rtl" placeholder="مثال: الدكتور في القاهرة هذا الشهر"></div>
@@ -227,12 +233,18 @@
   }
   el('addExc').onclick=function(){ el('exceptions').appendChild(excRow()); markDirty(); };
 
+  function updateReqPayLabel(){
+    el('reqPayLabel').textContent = el('requirePayment').checked
+      ? 'On — patient pays online to confirm'
+      : 'Off — booking confirms instantly, no payment';
+  }
   function collect(){
     var weekly={};
     Array.prototype.forEach.call(el('weekly').children,function(row){ weekly[row.dataset.d]=row._get(); });
     var exceptions=Array.prototype.map.call(el('exceptions').children,function(x){return x._get();}).filter(Boolean);
     return {
       slotMinutes:+el('slotMinutes').value||30, capacity:+el('capacity').value||1,
+      requirePayment:el('requirePayment').checked,
       note:{ar:el('noteAr').value,en:el('noteEn').value},
       weekly:weekly, exceptions:exceptions,
     };
@@ -243,8 +255,10 @@
     el('capacity').value=sched.capacity||1;
     el('noteAr').value=(sched.note&&sched.note.ar)||'';
     el('noteEn').value=(sched.note&&sched.note.en)||'';
+    var rp=sched.requirePayment!==false; el('requirePayment').checked=rp; updateReqPayLabel();
     renderWeekly(); renderExceptions();
     ['slotMinutes','capacity','noteAr','noteEn'].forEach(function(id){ el(id).oninput=markDirty; });
+    el('requirePayment').onchange=function(){ updateReqPayLabel(); markDirty(); };
     setStatus('All changes saved','ok'); dirty=false;
   }
 

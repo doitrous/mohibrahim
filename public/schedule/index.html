@@ -290,6 +290,7 @@
     fetch('/api/schedule',{cache:'no-store'}).then(function(r){return r.json();}).catch(function(){return null;})
   ]).then(function(v){
     if(v[0]) payCfg=v[0];
+    if(v[1]&&v[1].requirePayment===false) payCfg.enabled=false; // admin turned off online payment
     if(v[1]&&v[1].note&&(v[1].note.ar||v[1].note.en)) note=v[1].note;
     applyLang(lang); loadMonth();
   });

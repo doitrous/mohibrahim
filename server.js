@@ -49,7 +49,7 @@ const CONTENT = seed('content.json', path.join(PUBLIC, 'content.json'), '{}');
 const ARTICLES = seed('articles.json', path.join(PUBLIC, 'seohub', 'articles.json'), '[]');
 const PAYMENTS = seed('payments.json', null, '[]');
 const DEFAULT_SCHEDULE = {
-  timezone: 'Africa/Cairo', slotMinutes: 30, capacity: 1, note: { ar: '', en: '' },
+  timezone: 'Africa/Cairo', slotMinutes: 30, capacity: 1, requirePayment: true, note: { ar: '', en: '' },
   weekly: {
     '0': { open: true, ranges: [['16:00', '21:00']] }, '1': { open: true, ranges: [['16:00', '21:00']] },
     '2': { open: true, ranges: [['16:00', '21:00']] }, '3': { open: true, ranges: [['16:00', '21:00']] },
@@ -381,6 +381,7 @@ app.put('/api/schedule', requireAdmin, function (req, res) {
   if (!b || typeof b !== 'object' || Array.isArray(b)) return res.status(400).json({ error: 'invalid' });
   const sch = {
     timezone: 'Africa/Cairo', slotMinutes: Math.max(5, +b.slotMinutes || 30), capacity: Math.max(1, +b.capacity || 1),
+    requirePayment: b.requirePayment !== false,
     note: (b.note && typeof b.note === 'object') ? { ar: String(b.note.ar || ''), en: String(b.note.en || '') } : { ar: '', en: '' },
     weekly: {}, exceptions: [],
   };
@@ -419,7 +420,7 @@ app.post('/api/appointments', function (req, res) {
   if (!isDate(date) || !/^\d{2}:\d{2}$/.test(time)) return res.status(400).json({ error: 'bad_slot' });
   if (!name || !phone) return res.status(400).json({ error: 'missing_details' });
   if (availableSlots(sch, date, n.date, n.min).indexOf(time) < 0) return res.status(409).json({ error: 'slot_unavailable' });
-  const payEnabled = paytabsCfg().ok;
+  const payEnabled = paytabsCfg().ok && sch.requirePayment !== false;
   const appt = {
     id: 'apt-' + Date.now() + '-' + crypto.randomBytes(3).toString('hex'), date: date, time: time,
     name: name.slice(0, 80), phone: phone.slice(0, 30), email: email.slice(0, 100),
