@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://doitrous.github.io/mohibrahim/sitemap.xml
+Sitemap: https://mohibrahim.com/sitemap.xml

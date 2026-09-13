@@ -47,13 +47,15 @@ Open `/admin/`, log in with `ADMIN_PASSWORD`, edit with live preview, **Save & p
 (writes to the backend — live immediately). Tabs: Content · Offer · Contact · Reviews · SEO · Legal.
 
 ## Deploy on Coolify (project: mohibrahim)
+Already deployed at **https://mohibrahim.com** (build pack **Nixpacks** — `npm start`
+runs `node server.js`; Dockerfile also works). Auto-deploy on push to `main` is on.
 1. New Resource → **Application** → your GitHub repo `doitrous/mohibrahim` → branch `main`.
-2. Build pack: **Dockerfile**. Port: **3000**.
-3. **Storage** → add a Persistent Volume mounted at `/app/data` (keeps content & articles).
+2. Build pack: **Nixpacks** (or Dockerfile). Port: **3000**.
+3. **Storage** → add a Persistent Volume mounted at `/app/data` (keeps content,
+   articles & payments across redeploys — **without it these reset on every deploy**).
 4. **Environment**: `ADMIN_PASSWORD`, `SESSION_SECRET` (long random), `HUB_TOKEN` (for SEOHub),
-   and the PayTabs keys below.
-5. Set the domain, then **Deploy**. Update the domain in `public/sitemap.xml`,
-   `public/robots.txt` and the canonical/`og:` tags in `public/index.html`.
+   `SITE_URL=https://mohibrahim.com`, and the PayTabs keys below.
+5. Domains/canonical/sitemap already point to `mohibrahim.com`. Push to `main` to deploy.
 
 ## Online payment (PayTabs)
 
@@ -68,7 +70,7 @@ PAYTABS_PROFILE_ID   your PayTabs Profile ID
 PAYTABS_SERVER_KEY   your PayTabs Server Key
 PAYTABS_ENDPOINT     region base URL (default https://secure-egypt.paytabs.com)
 PAYTABS_CURRENCY     default EGP
-SITE_URL             https://mohibrahim.doitrous.com  (used for callback/return URLs)
+SITE_URL             https://mohibrahim.com  (used for callback/return URLs)
 ```
 
 Region endpoints: Egypt `https://secure-egypt.paytabs.com` · Saudi `https://secure.paytabs.sa`

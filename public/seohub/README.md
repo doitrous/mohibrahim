@@ -10,7 +10,7 @@ stores them and renders them at `/seohub/`.
 Add it as a **custom** site with:
 
 ```
-url    = https://mohibrahim.doitrous.com     (the deployed site)
+url    = https://mohibrahim.com     (the deployed site)
 secret = <the same value as this site's HUB_TOKEN env>
 ```
 
@@ -77,7 +77,7 @@ shared top-level fields:
 
 ```json
 { "results": [ { "lang": "ar", "remoteId": "invisible-braces-guide:ar",
-                 "remoteUrl": "https://mohibrahim.doitrous.com/seohub/?slug=invisible-braces-guide" } ],
+                 "remoteUrl": "https://mohibrahim.com/seohub/?slug=invisible-braces-guide" } ],
   "skipped": [] }
 ```
 
