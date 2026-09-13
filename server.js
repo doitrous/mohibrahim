@@ -8,6 +8,10 @@
  *   POST /api/articles           SEOHub — publish (custom-adapter envelope) (Bearer HUB_TOKEN)
  *   POST /api/seo/sync           SEOHub — snapshot ack (Bearer HUB_TOKEN)
  *   GET  /api/seo/pages          SEOHub — page registry (Bearer HUB_TOKEN)
+ *   GET  /api/pay/config         public — online payment availability + amount
+ *   POST /api/pay/create         public — start a PayTabs hosted payment
+ *   POST /api/pay/callback       PayTabs IPN (HMAC-verified) · ALL /api/pay/return
+ *   GET  /api/payments           admin  — list recorded payments
  *   POST /api/login {password}   -> sets HttpOnly session cookie
  *   POST /api/logout
  *   GET  /api/me                 -> { admin: bool }
@@ -38,6 +42,7 @@ function seed(dataName, seedPath, fallback) {
 }
 const CONTENT = seed('content.json', path.join(PUBLIC, 'content.json'), '{}');
 const ARTICLES = seed('articles.json', path.join(PUBLIC, 'seohub', 'articles.json'), '[]');
+const PAYMENTS = seed('payments.json', null, '[]');
 
 // ---- tiny signed-token session (no external dep) ----
 function sign(payload) {
@@ -75,7 +80,8 @@ function requireHub(req, res, next) {
 }
 
 app.disable('x-powered-by');
-app.use(express.json({ limit: '4mb' }));
+app.use(express.json({ limit: '4mb', verify: function (req, _res, buf) { req.rawBody = buf; } }));
+app.use(express.urlencoded({ extended: false })); // PayTabs return posts form-encoded
 
 app.get('/api/health', function (_req, res) { res.json({ ok: true }); });
 
@@ -184,6 +190,106 @@ app.delete('/api/articles/:slug', requireHub, function (req, res) {
 // (register the custom site in the hub with secret = HUB_TOKEN).
 app.post('/api/seo/sync', requireHub, function (_req, res) { res.json({ ok: true }); });
 app.get('/api/seo/pages', requireHub, function (_req, res) { res.json({ pages: [] }); });
+
+// ---- PayTabs online consultation payment (hosted payment page) ----
+// Fully wired; needs only the keys. Set PAYTABS_PROFILE_ID + PAYTABS_SERVER_KEY
+// (and PAYTABS_ENDPOINT for your region — default is Egypt, since the price is EGP).
+function paytabsCfg() {
+  const profileId = process.env.PAYTABS_PROFILE_ID || '';
+  const serverKey = process.env.PAYTABS_SERVER_KEY || '';
+  const endpoint = (process.env.PAYTABS_ENDPOINT || 'https://secure-egypt.paytabs.com').replace(/\/+$/, '');
+  return { ok: !!(profileId && serverKey), profileId, serverKey, endpoint };
+}
+// Price is the editable consultation offer price, so /admin edits flow through to the gateway.
+function consultPrice() {
+  let amount = '200';
+  try { const c = JSON.parse(fs.readFileSync(CONTENT, 'utf8')); if (c.offer && c.offer.price != null) amount = String(c.offer.price); } catch (_) {}
+  const n = Number(amount); return { amount: (n > 0 ? n : 200), currency: process.env.PAYTABS_CURRENCY || 'EGP' };
+}
+function readPayments() { try { const a = JSON.parse(fs.readFileSync(PAYMENTS, 'utf8')); return Array.isArray(a) ? a : []; } catch (_) { return []; } }
+function writePayments(a) { fs.writeFileSync(PAYMENTS, JSON.stringify(a, null, 2)); }
+function upsertPayment(match, patch) {
+  const a = readPayments();
+  const i = a.findIndex(match);
+  if (i >= 0) a[i] = Object.assign({}, a[i], patch); else a.push(patch);
+  writePayments(a);
+}
+async function ptFetch(cfg, route, body) {
+  const r = await fetch(cfg.endpoint + route, {
+    method: 'POST',
+    headers: { authorization: cfg.serverKey, 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  return r.json();
+}
+
+// Patient starts a payment; returns the PayTabs hosted-page URL to redirect to.
+app.post('/api/pay/create', async function (req, res) {
+  const cfg = paytabsCfg();
+  if (!cfg.ok) return res.status(503).json({ error: 'payment_unconfigured' });
+  const { amount, currency } = consultPrice();
+  const b = req.body || {};
+  const cartId = 'cons-' + Date.now() + '-' + crypto.randomBytes(3).toString('hex');
+  const base = baseUrl(req);
+  try {
+    const j = await ptFetch(cfg, '/payment/request', {
+      profile_id: cfg.profileId, tran_type: 'sale', tran_class: 'ecom',
+      cart_id: cartId, cart_currency: currency, cart_amount: amount,
+      cart_description: 'Consultation — Dr. Mohamed Shalaby',
+      paypage_lang: b.lang === 'en' ? 'en' : 'ar',
+      customer_details: {
+        name: (b.name || 'Patient').slice(0, 60), email: (b.email || '').slice(0, 100),
+        phone: (b.phone || '').slice(0, 30), country: 'EG',
+      },
+      callback: base + '/api/pay/callback',
+      return: base + '/api/pay/return',
+    });
+    if (!j || !j.redirect_url) return res.status(502).json({ error: 'gateway_error', detail: j });
+    upsertPayment(function (x) { return x.cartId === cartId; }, {
+      cartId: cartId, tranRef: j.tran_ref, amount: amount, currency: currency, status: 'pending',
+      name: b.name || '', email: b.email || '', phone: b.phone || '', createdAt: new Date().toISOString(),
+    });
+    res.json({ redirect_url: j.redirect_url, tran_ref: j.tran_ref });
+  } catch (e) { res.status(502).json({ error: 'gateway_error', detail: String(e && e.message || e) }); }
+});
+
+// Server-to-server IPN. Verified by HMAC-SHA256(rawBody, serverKey) against the `signature` header.
+app.post('/api/pay/callback', function (req, res) {
+  const cfg = paytabsCfg();
+  if (!cfg.ok) return res.status(503).end();
+  const sig = String(req.headers.signature || '');
+  const expected = crypto.createHmac('sha256', cfg.serverKey).update(req.rawBody || Buffer.from('')).digest('hex');
+  const a = Buffer.from(sig), e = Buffer.from(expected);
+  if (a.length !== e.length || !crypto.timingSafeEqual(a, e)) return res.status(400).json({ error: 'bad_signature' });
+  const b = req.body || {};
+  const st = (b.payment_result && b.payment_result.response_status) || b.respStatus;
+  const ref = b.tran_ref || b.tranRef;
+  upsertPayment(function (x) { return x.tranRef === ref || x.cartId === b.cart_id; },
+    { tranRef: ref, cartId: b.cart_id, status: st === 'A' ? 'paid' : 'failed', responseStatus: st, callbackAt: new Date().toISOString() });
+  res.json({ ok: true });
+});
+
+// Browser lands here after paying; we verify server-side, then redirect to the result page.
+app.all('/api/pay/return', async function (req, res) {
+  const cfg = paytabsCfg();
+  const src = Object.assign({}, req.query, req.body);
+  const ref = src.tranRef || src.tran_ref;
+  let ok = false;
+  if (cfg.ok && ref) {
+    try {
+      const j = await ptFetch(cfg, '/payment/query', { profile_id: cfg.profileId, tran_ref: ref });
+      const st = j && j.payment_result && j.payment_result.response_status;
+      ok = st === 'A';
+      upsertPayment(function (x) { return x.tranRef === ref; }, { tranRef: ref, status: ok ? 'paid' : 'failed', responseStatus: st, verifiedAt: new Date().toISOString() });
+    } catch (_) {}
+  }
+  res.redirect('/pay/?status=' + (ok ? 'success' : 'failed') + (ref ? '&ref=' + encodeURIComponent(ref) : ''));
+});
+
+// Doctor/admin can review payments.
+app.get('/api/payments', requireAdmin, function (_req, res) { res.json(readPayments()); });
+// Public: is online payment available + how much (so the UI can hide the button if unconfigured).
+app.get('/api/pay/config', function (_req, res) { const p = consultPrice(); res.json({ enabled: paytabsCfg().ok, amount: p.amount, currency: p.currency }); });
 
 app.use(express.static(PUBLIC, { extensions: ['html'] }));
 
