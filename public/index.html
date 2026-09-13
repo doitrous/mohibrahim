@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>د. محمد شلبي — استشاري تقويم الأسنان | القاهرة والسعودية</title>
 <meta name="description" content="د. محمد إبراهيم شلبي، استشاري تقويم الأسنان بخبرة تتجاوز 15 عامًا وأكثر من 1000 ابتسامة. فحص شامل وتشخيص رقمي وخطة علاج واضحة — القاهرة والسعودية.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 40 13V26C40 36 33 43 24 45 15 43 8 36 8 26V13Z' fill='%231C2A44'/%3E%3Ccircle cx='34' cy='13' r='3' fill='%23B8934B'/%3E%3C/svg%3E">
@@ -38,8 +38,9 @@
   }
   html[lang="en"]{--disp:'Marcellus','Times New Roman',serif; --body:'IBM Plex Sans',system-ui,sans-serif;}
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  html{scroll-behavior:smooth;scroll-padding-top:88px;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+  h1{overflow-wrap:break-word;word-break:break-word}
   a{color:var(--navy2);text-decoration:none}
   a:hover{color:var(--gold2)}
   h1,h2,h3{font-family:var(--disp);margin:0;line-height:1.18;color:var(--ink);font-weight:600}
@@ -197,8 +198,8 @@
   .socials{display:flex;gap:12px;margin-top:16px}
   .socials a{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center}
   /* mobile sticky book bar */
-  .bookbar{display:none;position:fixed;bottom:0;inset-inline:0;z-index:45;background:rgba(255,253,248,.95);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:12px 18px;gap:10px}
-  .bookbar a{flex:1}
+  .bookbar{display:none;position:fixed;bottom:0;inset-inline:0;z-index:45;background:rgba(255,253,248,.95);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:12px 18px;padding-bottom:calc(12px + env(safe-area-inset-bottom));gap:10px}
+  .bookbar a{flex:1;min-height:48px}
   /* language visibility */
   html[lang="ar"] .only-en{display:none}
   html[lang="en"] .only-ar{display:none}
@@ -218,20 +219,35 @@
     .burger{display:flex}
     .desk-cta{display:none}
     .bookbar{display:flex}
-    body{padding-bottom:74px}
+    body{padding-bottom:calc(74px + env(safe-area-inset-bottom))}
   }
   @media (max-width:600px){
     .wrap{padding:0 20px}
     .sec{padding:60px 0}
     .h2{font-size:30px}
+    .hero h1,html[lang="en"] .hero h1{font-size:33px;line-height:1.16}
+    .hero .lead{font-size:16.5px}
     .steps{grid-template-columns:1fr}
     .cases{grid-template-columns:1fr}
     .subcols{grid-template-columns:1fr;gap:24px}
     .statsband .wrap{padding:36px 20px}
+    .statitem .n{font-size:36px}
     .guar{padding:30px 22px}
     summary{font-size:16px;padding:18px 20px}
     details p{padding:0 20px 20px}
     .contact-sec h2{font-size:28px}
+    .floatstat{inset-inline-end:0;bottom:-22px;padding:14px 18px}
+    .floatstat .num{font-size:26px}
+    .offer h2{font-size:27px}
+    .cd-time{font-size:36px}
+  }
+  @media (max-width:360px){
+    .hero h1,html[lang="en"] .hero h1{font-size:29px}
+    .chip{font-size:13.5px;padding:8px 13px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition:none!important;animation:none!important}
   }
   /* mobile dropdown menu */
   .mmenu.open{display:block;position:fixed;inset-inline:0;top:76px;z-index:39;background:var(--paper);border-bottom:1px solid var(--line);padding:14px 20px 22px;box-shadow:0 24px 40px -28px rgba(28,42,68,.4)}
@@ -260,7 +276,7 @@
       <span class="on lang-ar">ع</span><span class="off lang-en">EN</span>
     </div>
     <a href="https://wa.me/201157717111" class="btn btn-primary desk-cta" style="padding:12px 22px;font-size:15px" data-en="Book a Consultation">احجز استشارتك</a>
-    <button class="burger" id="burger" aria-label="Menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <button class="burger" id="burger" aria-label="Menu" aria-controls="mmenu" aria-expanded="false"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
   </div>
 </div></header>
 <div class="mmenu" id="mmenu">
@@ -561,8 +577,13 @@
     }
     var burger = $('burger'), mmenu = $('mmenu');
     if(burger && mmenu){
-      burger.addEventListener('click', function(){ mmenu.classList.toggle('open'); });
-      mmenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ mmenu.classList.remove('open'); }); });
+      function setMenu(open){ mmenu.classList.toggle('open', open); burger.setAttribute('aria-expanded', open ? 'true' : 'false'); }
+      burger.addEventListener('click', function(e){ e.stopPropagation(); setMenu(!mmenu.classList.contains('open')); });
+      mmenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setMenu(false); }); });
+      // close on outside tap, Escape, or when resizing up to desktop
+      document.addEventListener('click', function(e){ if(mmenu.classList.contains('open') && !mmenu.contains(e.target) && e.target !== burger && !burger.contains(e.target)) setMenu(false); });
+      document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setMenu(false); });
+      window.addEventListener('resize', function(){ if(window.innerWidth > 960) setMenu(false); });
     }
   }
 

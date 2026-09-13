@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>إتمام حجز الاستشارة — د. محمد شلبي</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 40 13V26C40 36 33 43 24 45 15 43 8 36 8 26V13Z' fill='%231C2A44'/%3E%3Ccircle cx='34' cy='13' r='3' fill='%23B8934B'/%3E%3C/svg%3E">
@@ -14,7 +14,8 @@
     --disp:'El Messiri','IBM Plex Sans Arabic',serif;--body:'IBM Plex Sans Arabic',system-ui,sans-serif;}
   html[lang="en"]{--disp:'Marcellus','Times New Roman',serif;--body:'IBM Plex Sans',system-ui,sans-serif;}
   *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.7;-webkit-font-smoothing:antialiased}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.7;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
   a{color:var(--navy2);text-decoration:none}a:hover{color:var(--gold2)}
   .top{background:var(--surface);border-bottom:1px solid var(--line)}
   .top-in{max-width:1080px;margin:0 auto;padding:0 24px;height:74px;display:flex;align-items:center;justify-content:space-between}
@@ -65,7 +66,7 @@
   .card-bd{padding:22px 26px 26px}
   .fld{margin-bottom:15px}
   .fld label{display:block;font-size:13.5px;font-weight:600;color:var(--ink-soft);margin-bottom:6px}
-  .fld input{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;font-family:var(--body);font-size:15px;background:#fff;color:var(--ink)}
+  .fld input{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;font-family:var(--body);font-size:16px;background:#fff;color:var(--ink)}
   .fld input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,75,.15)}
   .fld .opt{color:var(--muted);font-weight:400}
   .err{background:rgba(178,58,58,.09);color:var(--bad);padding:11px 13px;border-radius:11px;font-size:14px;margin-bottom:14px}
