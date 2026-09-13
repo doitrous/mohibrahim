@@ -24,8 +24,9 @@
   html[lang="en"] .brand .name{font-weight:400}
   .brand .sub{font-size:10.5px;letter-spacing:.14em;color:var(--gold2);font-weight:600;margin-top:3px}
   .navr{display:flex;align-items:center;gap:14px}
-  .langtog{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;font-weight:700;font-size:13px;background:#fff;cursor:pointer}
-  .langtog span{padding:7px 12px}.langtog .on{background:var(--ink);color:#fff}.langtog .off{color:var(--muted)}
+  .langtog{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;font-weight:700;font-size:13px;background:#fff;color:var(--ink);cursor:pointer;padding:7px 13px;line-height:1;font-family:var(--body);-webkit-appearance:none;appearance:none}
+  .langtog:hover{border-color:var(--navy2);color:var(--navy2)}
+  .langtog .globe{flex:none;display:block}.langtog .langlabel{min-width:14px;text-align:center}
   .back{font-size:14.5px;font-weight:600;color:var(--ink-soft)}
   main{max-width:820px;margin:0 auto;padding:56px 24px 90px}
   .doctabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px}
@@ -51,12 +52,12 @@
 <body>
 <header class="nav"><div class="nav-in">
   <a class="brand" href="index.html">
-    <svg width="38" height="38" viewBox="0 0 48 48" fill="none"><path d="M24 4 L40 13 V26 C40 36 33 43 24 45 C15 43 8 36 8 26 V13 Z" fill="#1C2A44"/><path d="M24 15c-3-2-7-1-7 3 0 3 2 5 3 9 .5 2 1.2 4 2 4s1-1.4 1.5-3 .8-2.5 1.5-2.5 1 1 1.5 2.5S28.5 31 29 31s1.5-2 2-4c1-4 3-6 3-9 0-4-4-5-7-3-1 .7-2 .7-3 0Z" fill="#fff"/><circle cx="34" cy="13" r="2.4" fill="#B8934B"/></svg>
+    <svg width="38" height="38" viewBox="0 0 48 48" fill="none"><path d="M24 4 L40 13 V26 C40 36 33 43 24 45 C15 43 8 36 8 26 V13 Z" fill="#1C2A44"/><path transform="translate(-1.5 0)" d="M24 15c-3-2-7-1-7 3 0 3 2 5 3 9 .5 2 1.2 4 2 4s1-1.4 1.5-3 .8-2.5 1.5-2.5 1 1 1.5 2.5S28.5 31 29 31s1.5-2 2-4c1-4 3-6 3-9 0-4-4-5-7-3-1 .7-2 .7-3 0Z" fill="#fff"/><circle cx="34" cy="13" r="2.4" fill="#B8934B"/></svg>
     <span><span class="name">د. محمد شلبي</span><span class="sub" style="display:block">DIAMOND ORTHODONTICS</span></span>
   </a>
   <div class="navr">
     <a class="back" href="index.html" id="backLink">→ العودة للموقع</a>
-    <div class="langtog" id="langtog" role="button" tabindex="0" aria-label="Switch language"><span class="on">ع</span><span class="off">EN</span></div>
+    <button class="langtog" id="langtog" type="button" aria-label="Switch language"><svg class="globe" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 4 5.8 4 9s-1.4 6.3-4 9c-2.6-2.7-4-5.8-4-9s1.4-6.3 4-9z"/></svg><span class="langlabel">EN</span></button>
   </div>
 </div></header>
 
@@ -101,6 +102,8 @@
 
   function render(){
     htmlEl.lang=lang; htmlEl.dir=lang==='en'?'ltr':'rtl';
+    var ll=document.querySelector('#langtog .langlabel'); if(ll) ll.textContent=lang==='en'?'ع':'EN';
+    var lt=document.getElementById('langtog'); if(lt) lt.setAttribute('aria-label',lang==='en'?'التبديل إلى العربية':'Switch to English');
     document.getElementById('backLink').textContent=STATIC.back[lang];
     document.getElementById('homeLink').textContent=STATIC.home[lang];
     document.getElementById('copy').textContent=STATIC.copy[lang];
