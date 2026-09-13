@@ -3,75 +3,237 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>حالة الدفع — د. محمد شلبي</title>
+<title>إتمام حجز الاستشارة — د. محمد شلبي</title>
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 40 13V26C40 36 33 43 24 45 15 43 8 36 8 26V13Z' fill='%231C2A44'/%3E%3Ccircle cx='34' cy='13' r='3' fill='%23B8934B'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Marcellus&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap">
 <style>
-  :root{--ink:#1C2A44;--gold:#B8934B;--gold2:#9A7734;--paper:#F7F1E6;--surface:#FFFDF8;--line:#E7DDC9;--muted:#7C7466;--ink-soft:#41485C;--ok:#2E7D5B;--bad:#B23A3A;
+  :root{--ink:#1C2A44;--navy2:#33456A;--gold:#B8934B;--gold2:#9A7734;--paper:#F7F1E6;--surface:#FFFDF8;--line:#E7DDC9;--muted:#7C7466;--ink-soft:#41485C;--ok:#2E7D5B;--bad:#B23A3A;
     --disp:'El Messiri','IBM Plex Sans Arabic',serif;--body:'IBM Plex Sans Arabic',system-ui,sans-serif;}
   html[lang="en"]{--disp:'Marcellus','Times New Roman',serif;--body:'IBM Plex Sans',system-ui,sans-serif;}
   *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:24px;max-width:480px;width:100%;padding:44px 40px;text-align:center;box-shadow:0 24px 60px -30px rgba(28,42,68,.35)}
-  .badge{width:76px;height:76px;border-radius:50%;margin:0 auto 22px;display:flex;align-items:center;justify-content:center}
-  .badge.ok{background:rgba(46,125,91,.12);color:var(--ok)}.badge.bad{background:rgba(178,58,58,.12);color:var(--bad)}
-  h1{font-family:var(--disp);font-size:28px;margin:0 0 10px}
-  html[lang="en"] h1{font-weight:400}
-  p{color:var(--ink-soft);font-size:16.5px;line-height:1.8;margin:0 0 8px}
-  .ref{color:var(--muted);font-size:13px;margin-top:12px;direction:ltr}
-  .actions{margin-top:28px;display:flex;flex-direction:column;gap:12px}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--body);font-weight:600;font-size:16px;padding:14px 26px;border-radius:999px;cursor:pointer;border:1.5px solid transparent;text-decoration:none}
-  .btn-primary{background:var(--gold);color:var(--ink)}.btn-primary:hover{background:var(--gold2);color:#fff}
-  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}.btn-ghost:hover{border-color:var(--ink)}
-  .langtog{position:fixed;top:18px;inset-inline-end:18px;display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;font-weight:700;font-size:13px;background:#fff;cursor:pointer}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.7;-webkit-font-smoothing:antialiased}
+  a{color:var(--navy2);text-decoration:none}a:hover{color:var(--gold2)}
+  .top{background:var(--surface);border-bottom:1px solid var(--line)}
+  .top-in{max-width:1080px;margin:0 auto;padding:0 24px;height:74px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .name{font-family:var(--disp);font-weight:700;font-size:19px;color:var(--ink);line-height:1.1}
+  html[lang="en"] .brand .name{font-weight:400}
+  .brand .sub{font-size:10px;letter-spacing:.16em;color:var(--gold2);font-weight:600;margin-top:3px}
+  .topr{display:flex;align-items:center;gap:16px}
+  .back{font-size:14px;font-weight:600;color:var(--ink-soft)}
+  .langtog{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;font-weight:700;font-size:13px;background:#fff;cursor:pointer}
   .langtog span{padding:7px 12px}.langtog .on{background:var(--ink);color:#fff}.langtog .off{color:var(--muted)}
+
+  main{max-width:1080px;margin:0 auto;padding:44px 24px 80px}
+  .eyebrow{font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold2);font-weight:600}
+  h1{font-family:var(--disp);font-size:38px;line-height:1.15;margin:12px 0 10px;font-weight:700}
+  html[lang="en"] h1{font-weight:400}
+  .lede{color:var(--ink-soft);font-size:17px;max-width:520px;margin:0 0 8px}
+
+  .grid{display:grid;grid-template-columns:1fr 420px;gap:40px;margin-top:34px;align-items:start}
+
+  /* left — reassurance */
+  .sec-h{font-family:var(--disp);font-size:19px;font-weight:600;margin:0 0 16px}
+  .incl{list-style:none;margin:0 0 30px;padding:0;display:flex;flex-direction:column;gap:14px}
+  .incl li{display:flex;gap:13px;align-items:flex-start}
+  .tick{flex:none;width:26px;height:26px;border-radius:50%;background:rgba(184,147,75,.14);color:var(--gold2);display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .incl .t{font-weight:600;font-size:15.5px;color:var(--ink)}
+  .incl .d{font-size:14px;color:var(--muted)}
+  .guar{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:26px}
+  .guar .gi{flex:none;color:var(--gold2)}
+  .guar .gt{font-family:var(--disp);font-weight:600;font-size:16.5px;margin:0 0 3px}
+  .guar .gb{font-size:14px;color:var(--ink-soft);margin:0}
+  .stats{display:flex;gap:26px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:22px}
+  .stat .n{font-family:var(--disp);font-weight:700;font-size:23px;color:var(--ink);display:flex;align-items:center;gap:5px}
+  html[lang="en"] .stat .n{font-weight:400}
+  .stat .l{font-size:12.5px;color:var(--muted)}
+  .star{color:var(--gold)}
+
+  /* right — payment card */
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 60px -34px rgba(28,42,68,.4);overflow:hidden;position:sticky;top:24px}
+  .card-hd{padding:24px 26px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,var(--surface))}
+  .card-hd .k{font-size:13px;color:var(--muted);font-weight:600}
+  .price{display:flex;align-items:baseline;gap:10px;margin-top:6px}
+  .price .now{font-family:var(--disp);font-weight:700;font-size:40px;color:var(--ink);line-height:1}
+  html[lang="en"] .price .now{font-weight:400}
+  .price .cur{font-size:16px;color:var(--ink-soft);font-weight:600}
+  .price .old{font-size:16px;color:var(--muted);text-decoration:line-through}
+  .save{display:inline-block;margin-top:10px;background:var(--gold);color:var(--ink);font-weight:700;font-size:12.5px;padding:5px 12px;border-radius:999px}
+  .card-bd{padding:22px 26px 26px}
+  .fld{margin-bottom:15px}
+  .fld label{display:block;font-size:13.5px;font-weight:600;color:var(--ink-soft);margin-bottom:6px}
+  .fld input{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;font-family:var(--body);font-size:15px;background:#fff;color:var(--ink)}
+  .fld input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,75,.15)}
+  .fld .opt{color:var(--muted);font-weight:400}
+  .err{background:rgba(178,58,58,.09);color:var(--bad);padding:11px 13px;border-radius:11px;font-size:14px;margin-bottom:14px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;font-family:var(--body);font-weight:700;font-size:16.5px;padding:16px;border-radius:999px;cursor:pointer;border:none;background:var(--gold);color:var(--ink);box-shadow:0 12px 26px -12px rgba(184,147,75,.75);transition:.18s}
+  .btn:hover{background:var(--gold2);color:#fff}
+  .btn:disabled{opacity:.6;cursor:default}
+  .btn-wa{background:#128C7E;color:#fff;box-shadow:none}
+  .btn-wa:hover{background:#0e7568;color:#fff}
+  .secure{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:13px;margin-top:14px}
+  .assure{display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);color:var(--ink-soft);font-size:13.5px}
+  .assure svg{flex:none;color:var(--gold2);margin-top:1px}
+  .fine{font-size:12px;color:var(--muted);margin-top:14px;text-align:center}
+  .pays{display:flex;gap:7px;align-items:center;justify-content:center;margin-top:12px;flex-wrap:wrap}
+  .paybadge{font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--ink-soft);border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 8px}
+
+  @media(max-width:900px){
+    .grid{grid-template-columns:1fr;gap:30px}
+    .card{position:static;order:-1}
+    h1{font-size:31px}
+    .top .back span{display:none}
+  }
 </style>
 </head>
 <body>
-<div class="langtog" id="langtog" role="button" tabindex="0" aria-label="Switch language"><span class="on">ع</span><span class="off">EN</span></div>
-<div class="card">
-  <div class="badge" id="badge"></div>
-  <h1 id="title"></h1>
-  <p id="msg"></p>
-  <div class="ref" id="ref"></div>
-  <div class="actions">
-    <a class="btn btn-primary" id="waBtn" href="https://wa.me/201157717111"></a>
-    <a class="btn btn-ghost" href="../index.html" id="homeBtn"></a>
+<header class="top"><div class="top-in">
+  <a class="brand" href="../index.html">
+    <svg width="38" height="38" viewBox="0 0 48 48" fill="none"><path d="M24 4 L40 13 V26 C40 36 33 43 24 45 C15 43 8 36 8 26 V13 Z" fill="#1C2A44"/><path d="M24 15c-3-2-7-1-7 3 0 3 2 5 3 9 .5 2 1.2 4 2 4s1-1.4 1.5-3 .8-2.5 1.5-2.5 1 1 1.5 2.5S28.5 31 29 31s1.5-2 2-4c1-4 3-6 3-9 0-4-4-5-7-3-1 .7-2 .7-3 0Z" fill="#fff"/><circle cx="34" cy="13" r="2.4" fill="#B8934B"/></svg>
+    <span><span class="name">د. محمد شلبي</span><span class="sub" style="display:block">DIAMOND ORTHODONTICS</span></span>
+  </a>
+  <div class="topr">
+    <a class="back" href="../index.html" id="backLink">→ <span data-en="Back to site">العودة للموقع</span></a>
+    <div class="langtog" id="langtog" role="button" tabindex="0" aria-label="Switch language"><span class="on">ع</span><span class="off">EN</span></div>
   </div>
-</div>
+</div></header>
+
+<main>
+  <span class="eyebrow" data-en="Secure booking">حجز آمن</span>
+  <h1 data-en="Complete your consultation booking">أكمل حجز استشارتك</h1>
+  <p class="lede" data-en="A few details and you're set. You pay only for the first consultation — reviewed by Dr. Mohamed Shalaby himself.">بيانات بسيطة وتكون جاهزًا. تدفع فقط قيمة الاستشارة الأولى — التي يتابعها د. محمد شلبي بنفسه.</p>
+
+  <div class="grid">
+    <!-- LEFT: reassurance -->
+    <section>
+      <h2 class="sec-h" data-en="What your consultation includes">ما تشمله استشارتك</h2>
+      <ul class="incl">
+        <li><span class="tick"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span><span class="t" data-en="Comprehensive examination">فحص شامل</span><br><span class="d" data-en="A full assessment of your teeth and bite.">تقييم كامل لحالة أسنانك وإطباقك.</span></span></li>
+        <li><span class="tick"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span><span class="t" data-en="Digital jaw assessment">فحص الفكين الديجيتال</span><br><span class="d" data-en="Precise digital imaging of the jaws.">تصوير رقمي دقيق للفكين.</span></span></li>
+        <li><span class="tick"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span><span class="t" data-en="Answers to all your questions">إجابة على كل استفساراتك</span><br><span class="d" data-en="Time to discuss everything on your mind.">وقت كافٍ لمناقشة كل ما يشغلك.</span></span></li>
+        <li><span class="tick"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+          <span><span class="t" data-en="A clear treatment plan">خطة علاجية واضحة</span><br><span class="d" data-en="Your options, timeline and expected results.">خياراتك ومدة العلاج والنتائج المتوقعة.</span></span></li>
+      </ul>
+
+      <div class="guar">
+        <span class="gi"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3 4 6v6c0 5 3.4 7.8 8 9 4.6-1.2 8-4 8-9V6l-8-3z"/><path d="M9 12l2 2 4-4"/></svg></span>
+        <div><p class="gt" id="guarT" data-en="Consultation refund guarantee">ضمان استرداد قيمة الاستشارة</p>
+          <p class="gb" id="guarB" data-en="If you feel the consultation did not add value, we refund it — no questions asked.">إذا شعرت أن الاستشارة لم تضف لك قيمة، نعيد لك المبلغ — دون أي أسئلة.</p></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span class="n"><svg class="star" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.9 21l1.2-6.8-5-4.9 6.9-1z"/></svg><span id="ratingN">4.9</span></span><span class="l" data-en="patient rating">تقييم المرضى</span></div>
+        <div class="stat"><span class="n" id="stat0">+1000</span><span class="l" data-en="smiles created">ابتسامة</span></div>
+        <div class="stat"><span class="n" id="stat1">15</span><span class="l" data-en="years of experience">عام خبرة</span></div>
+      </div>
+    </section>
+
+    <!-- RIGHT: payment card -->
+    <aside class="card">
+      <div class="card-hd">
+        <div class="k" data-en="First orthodontic consultation">استشارة تقويم أولى</div>
+        <div class="price"><span class="now" id="priceNow">200</span><span class="cur" id="priceCur">جنيه</span><span class="old"><span id="priceOld">400</span> <span data-en="EGP">جنيه</span></span></div>
+        <span class="save" id="saveBadge" data-en="Save 200 EGP">وفّر 200 جنيه</span>
+      </div>
+      <div class="card-bd">
+        <form id="payForm" novalidate>
+          <div class="fld"><label for="fName" data-en="Full name">الاسم بالكامل</label><input id="fName" type="text" autocomplete="name" required></div>
+          <div class="fld"><label for="fPhone" data-en="Phone number">رقم الهاتف</label><input id="fPhone" type="tel" autocomplete="tel" dir="ltr" required></div>
+          <div class="fld"><label for="fEmail"><span data-en="Email">البريد الإلكتروني</span> <span class="opt" data-en="(optional)">(اختياري)</span></label><input id="fEmail" type="email" autocomplete="email" dir="ltr"></div>
+          <div class="err" id="err" hidden></div>
+          <button type="submit" class="btn" id="submitBtn">
+            <span data-en="Continue to secure payment">المتابعة للدفع الآمن</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" id="btnArrow"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </form>
+
+        <!-- shown if online payment is not configured -->
+        <div id="waFallback" hidden>
+          <p class="err" style="background:rgba(184,147,75,.1);color:var(--gold2)" data-en="Online payment is being set up. You can book your consultation on WhatsApp right now.">الدفع الأونلاين قيد التفعيل. يمكنك حجز استشارتك عبر واتساب الآن.</p>
+          <a href="https://wa.me/201157717111" class="btn btn-wa" id="waBtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.7 15L2 22l5.2-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.1 14.9l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 0 1 12 4z"/></svg><span data-en="Book on WhatsApp">احجز عبر واتساب</span></a>
+        </div>
+
+        <div class="secure"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span data-en="Encrypted & secure payment via PayTabs">دفع مشفّر وآمن عبر PayTabs</span></div>
+        <div class="pays"><span class="paybadge">VISA</span><span class="paybadge">Mastercard</span><span class="paybadge">Meeza</span></div>
+        <div class="assure"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span data-en="You will not be charged until you confirm on the secure PayTabs page.">لن يتم خصم أي مبلغ حتى تؤكد الدفع على صفحة PayTabs الآمنة.</span></div>
+        <p class="fine"><span data-en="By continuing you agree to our">بالمتابعة فإنك توافق على</span> <a href="../legal.html?doc=terms" data-en="Terms">الشروط والأحكام</a>.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
 <script>
 (function(){
-  var p=new URLSearchParams(location.search);
-  var ok=p.get('status')==='success', ref=p.get('ref')||'';
+  var htmlEl=document.documentElement;
   var lang='ar'; try{ if(localStorage.getItem('lang')==='en') lang='en'; }catch(e){}
-  var T={
-    okTitle:{ar:'تم الدفع بنجاح',en:'Payment successful'},
-    okMsg:{ar:'شكرًا لك. تم تأكيد دفع الاستشارة. سنتواصل معك عبر واتساب لتحديد موعدك.',en:'Thank you. Your consultation payment is confirmed. We will contact you on WhatsApp to schedule your appointment.'},
-    badTitle:{ar:'لم يكتمل الدفع',en:'Payment not completed'},
-    badMsg:{ar:'لم تتم عملية الدفع. لم يتم خصم أي مبلغ. يمكنك المحاولة مرة أخرى أو التواصل معنا.',en:'The payment did not go through. You have not been charged. You can try again or contact us.'},
-    refL:{ar:'رقم العملية',en:'Reference'},
-    wa:{ar:'تواصل عبر واتساب',en:'Contact on WhatsApp'},
-    home:{ar:'العودة للموقع',en:'Back to site'}
-  };
-  function pick(o){return lang==='en'?o.en:o.ar;}
-  var ICON_OK='<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
-  var ICON_BAD='<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
-  function render(){
-    document.documentElement.lang=lang; document.documentElement.dir=lang==='en'?'ltr':'rtl';
-    var b=document.getElementById('badge');
-    b.className='badge '+(ok?'ok':'bad'); b.innerHTML=ok?ICON_OK:ICON_BAD;
-    document.getElementById('title').textContent=ok?pick(T.okTitle):pick(T.badTitle);
-    document.getElementById('msg').textContent=ok?pick(T.okMsg):pick(T.badMsg);
-    document.getElementById('ref').textContent=ref?(pick(T.refL)+': '+ref):'';
-    document.getElementById('waBtn').textContent=pick(T.wa);
-    document.getElementById('homeBtn').textContent=pick(T.home);
-    document.title=(ok?pick(T.okTitle):pick(T.badTitle))+' — '+(lang==='en'?'Dr. Mohamed Shalaby':'د. محمد شلبي');
+  function $(id){return document.getElementById(id);}
+  function all(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+
+  function capture(){ all('[data-en]').forEach(function(el){ if(!el.hasAttribute('data-ar')) el.setAttribute('data-ar', el.textContent); }); }
+  function ph(){
+    $('fName').placeholder  = lang==='en'?'e.g. Ahmed Mohamed':'مثال: أحمد محمد';
+    $('fPhone').placeholder = lang==='en'?'+20 1XX XXX XXXX':'+20 1XX XXX XXXX';
+    $('fEmail').placeholder = lang==='en'?'name@email.com':'name@email.com';
+    $('priceCur').textContent = lang==='en'?'EGP':'جنيه';
   }
-  document.getElementById('langtog').addEventListener('click',function(){lang=lang==='en'?'ar':'en';try{localStorage.setItem('lang',lang);}catch(e){}render();});
-  render();
+  function applyLang(l){
+    lang=l==='en'?'en':'ar'; htmlEl.lang=lang; htmlEl.dir=lang==='en'?'ltr':'rtl';
+    all('[data-en]').forEach(function(el){ el.textContent = lang==='en'?el.getAttribute('data-en'):el.getAttribute('data-ar'); });
+    $('backLink').firstChild.textContent = lang==='en'?'← ':'→ ';
+    ph(); try{localStorage.setItem('lang',lang);}catch(e){}
+    document.title=(lang==='en'?'Complete your booking — Dr. Mohamed Shalaby':'إتمام حجز الاستشارة — د. محمد شلبي');
+  }
+  $('langtog').addEventListener('click',function(){ applyLang(lang==='en'?'ar':'en'); });
+  $('langtog').addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault(); applyLang(lang==='en'?'ar':'en');} });
+
+  // pull price/trust numbers from site content so the checkout stays in sync with /admin
+  function num(x){ return (x==null?'':String(x)); }
+  fetch('/api/content',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}).then(function(c){
+    if(!c) return;
+    var o=c.offer||{};
+    if(o.price!=null) $('priceNow').textContent=num(o.price);
+    if(o.oldPrice!=null) $('priceOld').textContent=num(o.oldPrice);
+    if(o.currency){ $('priceCur').setAttribute('data-ar',o.currency.ar||'جنيه'); $('priceCur').setAttribute('data-en',o.currency.en||'EGP'); $('priceCur').textContent=lang==='en'?(o.currency.en||'EGP'):(o.currency.ar||'جنيه'); }
+    if(c.rating!=null) $('ratingN').textContent=num(c.rating);
+    if(c.stats&&c.stats[0]&&c.stats[0].n!=null) $('stat0').textContent=num(c.stats[0].n);
+    if(c.stats&&c.stats[1]&&c.stats[1].n!=null) $('stat1').textContent=num(c.stats[1].n);
+    if(c.guarantee){ if(c.guarantee.title){$('guarT').setAttribute('data-ar',c.guarantee.title.ar||'');$('guarT').setAttribute('data-en',c.guarantee.title.en||'');} if(c.guarantee.body){$('guarB').setAttribute('data-ar',c.guarantee.body.ar||'');$('guarB').setAttribute('data-en',c.guarantee.body.en||'');} applyLang(lang); }
+    var w=c.whatsapp?String(c.whatsapp).replace(/\D/g,''):''; if(w) $('waBtn').href='https://wa.me/'+w;
+  });
+
+  // gate on payment availability
+  fetch('/api/pay/config',{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+    if(j&&j.enabled){ if(j.amount!=null)$('priceNow').textContent=num(j.amount); }
+    else { $('payForm').hidden=true; $('waFallback').hidden=false; }
+  }).catch(function(){});
+
+  $('payForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=$('fName').value.trim(), phone=$('fPhone').value.trim(), email=$('fEmail').value.trim();
+    var err=$('err');
+    function bad(m){ err.textContent=m; err.hidden=false; }
+    if(!name||!phone){ bad(lang==='en'?'Please enter your name and phone number.':'من فضلك أدخل الاسم ورقم الهاتف.'); return; }
+    err.hidden=true;
+    var b=$('submitBtn'); b.disabled=true;
+    var lbl=b.querySelector('span'); var old=lbl.textContent; lbl.textContent=lang==='en'?'Redirecting…':'جارٍ التحويل…';
+    fetch('/api/pay/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,phone:phone,email:email,lang:lang})})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){
+        if(res.ok&&res.j&&res.j.redirect_url){ window.location.href=res.j.redirect_url; return; }
+        if(res.j&&res.j.error==='payment_unconfigured'){ $('payForm').hidden=true; $('waFallback').hidden=false; return; }
+        bad(lang==='en'?'Could not start the payment. Please try again or book on WhatsApp.':'تعذّر بدء الدفع. حاول مجددًا أو احجز عبر واتساب.');
+        b.disabled=false; lbl.textContent=old;
+      })
+      .catch(function(){ bad(lang==='en'?'Network error. Please try again.':'خطأ في الشبكة. حاول مجددًا.'); b.disabled=false; lbl.textContent=old; });
+  });
+
+  capture(); applyLang(lang);
 })();
 </script>
 </body>

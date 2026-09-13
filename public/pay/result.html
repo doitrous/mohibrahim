@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حالة الدفع — د. محمد شلبي</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 4 40 13V26C40 36 33 43 24 45 15 43 8 36 8 26V13Z' fill='%231C2A44'/%3E%3Ccircle cx='34' cy='13' r='3' fill='%23B8934B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Marcellus&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap">
+<style>
+  :root{--ink:#1C2A44;--gold:#B8934B;--gold2:#9A7734;--paper:#F7F1E6;--surface:#FFFDF8;--line:#E7DDC9;--muted:#7C7466;--ink-soft:#41485C;--ok:#2E7D5B;--bad:#B23A3A;
+    --disp:'El Messiri','IBM Plex Sans Arabic',serif;--body:'IBM Plex Sans Arabic',system-ui,sans-serif;}
+  html[lang="en"]{--disp:'Marcellus','Times New Roman',serif;--body:'IBM Plex Sans',system-ui,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:24px;max-width:480px;width:100%;padding:44px 40px;text-align:center;box-shadow:0 24px 60px -30px rgba(28,42,68,.35)}
+  .badge{width:76px;height:76px;border-radius:50%;margin:0 auto 22px;display:flex;align-items:center;justify-content:center}
+  .badge.ok{background:rgba(46,125,91,.12);color:var(--ok)}.badge.bad{background:rgba(178,58,58,.12);color:var(--bad)}
+  h1{font-family:var(--disp);font-size:28px;margin:0 0 10px}
+  html[lang="en"] h1{font-weight:400}
+  p{color:var(--ink-soft);font-size:16.5px;line-height:1.8;margin:0 0 8px}
+  .ref{color:var(--muted);font-size:13px;margin-top:12px;direction:ltr}
+  .actions{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--body);font-weight:600;font-size:16px;padding:14px 26px;border-radius:999px;cursor:pointer;border:1.5px solid transparent;text-decoration:none}
+  .btn-primary{background:var(--gold);color:var(--ink)}.btn-primary:hover{background:var(--gold2);color:#fff}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}.btn-ghost:hover{border-color:var(--ink)}
+  .langtog{position:fixed;top:18px;inset-inline-end:18px;display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;font-weight:700;font-size:13px;background:#fff;cursor:pointer}
+  .langtog span{padding:7px 12px}.langtog .on{background:var(--ink);color:#fff}.langtog .off{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="langtog" id="langtog" role="button" tabindex="0" aria-label="Switch language"><span class="on">ع</span><span class="off">EN</span></div>
+<div class="card">
+  <div class="badge" id="badge"></div>
+  <h1 id="title"></h1>
+  <p id="msg"></p>
+  <div class="ref" id="ref"></div>
+  <div class="actions">
+    <a class="btn btn-primary" id="waBtn" href="https://wa.me/201157717111"></a>
+    <a class="btn btn-ghost" href="../index.html" id="homeBtn"></a>
+  </div>
+</div>
+<script>
+(function(){
+  var p=new URLSearchParams(location.search);
+  var ok=p.get('status')==='success', ref=p.get('ref')||'';
+  var lang='ar'; try{ if(localStorage.getItem('lang')==='en') lang='en'; }catch(e){}
+  var T={
+    okTitle:{ar:'تم الدفع بنجاح',en:'Payment successful'},
+    okMsg:{ar:'شكرًا لك. تم تأكيد دفع الاستشارة. سنتواصل معك عبر واتساب لتحديد موعدك.',en:'Thank you. Your consultation payment is confirmed. We will contact you on WhatsApp to schedule your appointment.'},
+    badTitle:{ar:'لم يكتمل الدفع',en:'Payment not completed'},
+    badMsg:{ar:'لم تتم عملية الدفع. لم يتم خصم أي مبلغ. يمكنك المحاولة مرة أخرى أو التواصل معنا.',en:'The payment did not go through. You have not been charged. You can try again or contact us.'},
+    refL:{ar:'رقم العملية',en:'Reference'},
+    wa:{ar:'تواصل عبر واتساب',en:'Contact on WhatsApp'},
+    home:{ar:'العودة للموقع',en:'Back to site'}
+  };
+  function pick(o){return lang==='en'?o.en:o.ar;}
+  var ICON_OK='<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  var ICON_BAD='<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  function render(){
+    document.documentElement.lang=lang; document.documentElement.dir=lang==='en'?'ltr':'rtl';
+    var b=document.getElementById('badge');
+    b.className='badge '+(ok?'ok':'bad'); b.innerHTML=ok?ICON_OK:ICON_BAD;
+    document.getElementById('title').textContent=ok?pick(T.okTitle):pick(T.badTitle);
+    document.getElementById('msg').textContent=ok?pick(T.okMsg):pick(T.badMsg);
+    document.getElementById('ref').textContent=ref?(pick(T.refL)+': '+ref):'';
+    document.getElementById('waBtn').textContent=pick(T.wa);
+    document.getElementById('homeBtn').textContent=pick(T.home);
+    document.title=(ok?pick(T.okTitle):pick(T.badTitle))+' — '+(lang==='en'?'Dr. Mohamed Shalaby':'د. محمد شلبي');
+  }
+  document.getElementById('langtog').addEventListener('click',function(){lang=lang==='en'?'ar':'en';try{localStorage.setItem('lang',lang);}catch(e){}render();});
+  render();
+})();
+</script>
+</body>
+</html>

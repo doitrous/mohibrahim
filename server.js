@@ -283,7 +283,7 @@ app.all('/api/pay/return', async function (req, res) {
       upsertPayment(function (x) { return x.tranRef === ref; }, { tranRef: ref, status: ok ? 'paid' : 'failed', responseStatus: st, verifiedAt: new Date().toISOString() });
     } catch (_) {}
   }
-  res.redirect('/pay/?status=' + (ok ? 'success' : 'failed') + (ref ? '&ref=' + encodeURIComponent(ref) : ''));
+  res.redirect('/pay/result?status=' + (ok ? 'success' : 'failed') + (ref ? '&ref=' + encodeURIComponent(ref) : ''));
 });
 
 // Doctor/admin can review payments.

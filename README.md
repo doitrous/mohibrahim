@@ -77,9 +77,11 @@ Region endpoints: Egypt `https://secure-egypt.paytabs.com` · Saudi `https://sec
 · UAE/global `https://secure.paytabs.com`. The charged amount is the **offer price** in
 `/admin` (currently 200), so editing the price also changes what patients pay.
 
-Flow: `POST /api/pay/create` opens a PayTabs hosted page → patient pays → PayTabs calls
-`POST /api/pay/callback` (HMAC-verified) and returns the browser to `/api/pay/return`,
-which verifies server-side and redirects to `/pay/?status=…`. Records land in
+Flow: the offer button opens the branded checkout page **`/pay/`** (collects name/phone/
+email, shows what's included + the refund guarantee), which `POST`s `/api/pay/create` to
+open a PayTabs hosted page → patient pays → PayTabs calls `POST /api/pay/callback`
+(HMAC-verified) and returns the browser to `/api/pay/return`, which verifies server-side
+and redirects to the result page **`/pay/result?status=…`**. Records land in
 `data/payments.json`; the doctor can review them at `GET /api/payments` (admin cookie).
 In the PayTabs dashboard no extra config is needed — the callback/return URLs are sent
 per transaction.

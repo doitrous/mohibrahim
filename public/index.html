@@ -325,7 +325,7 @@
     </div>
     <div class="offer-cta">
       <div class="countdown" aria-live="polite"><span class="cd-label" data-en="Offer ends in">ينتهي العرض خلال</span><span class="cd-time" id="cdTime" dir="ltr">04:59</span></div>
-      <button type="button" id="payBtn" class="btn btn-primary btn-lg" hidden><span data-en="Pay your consultation online">ادفع استشارتك أونلاين الآن</span></button>
+      <a href="pay/" id="payBtn" class="btn btn-primary btn-lg" hidden><span data-en="Pay your consultation online">ادفع استشارتك أونلاين الآن</span></a>
       <a href="https://wa.me/201157717111" class="btn btn-primary btn-lg" id="offerBookBtn"><span data-en="Book now — save 200 EGP">احجز الآن — وفّر 200 جنيه</span></a>
       <a href="tel:+201157717111" class="offer-call" data-en="or call +20 115 771 7111">أو اتصل: +20 115 771 7111</a>
     </div>
@@ -594,42 +594,13 @@
     if(isAdmin) enableAdmin();
   }
 
-  // ---- PayTabs online consultation payment ----
+  // ---- PayTabs: reveal the "pay online" button only when the gateway is configured ----
   function initPay(){
-    var btn = $('payBtn'), modal = $('payModal');
-    if(!btn || !modal) return;
-    fetch('/api/pay/config', { cache:'no-store' }).then(function(r){ return r.json(); }).then(function(j){
-      if(j && j.enabled){ btn.hidden = false; if($('payAmt') && j.amount!=null) $('payAmt').textContent = j.amount; }
-    }).catch(function(){});
-    function ph(){
-      $('payName').placeholder  = curLang==='en' ? 'Full name' : 'الاسم بالكامل';
-      $('payPhone').placeholder = curLang==='en' ? 'Phone number' : 'رقم الهاتف';
-      $('payEmail').placeholder = curLang==='en' ? 'Email (optional)' : 'البريد الإلكتروني (اختياري)';
-      if($('payCur')) $('payCur').textContent = curLang==='en' ? 'EGP' : 'جنيه';
-    }
-    function open(){ ph(); $('payErr').hidden = true; modal.hidden = false; $('payName').focus(); }
-    function close(){ modal.hidden = true; }
-    btn.addEventListener('click', open);
-    $('payClose').addEventListener('click', close);
-    modal.addEventListener('click', function(e){ if(e.target === modal) close(); });
-    document.addEventListener('keydown', function(e){ if(e.key==='Escape' && !modal.hidden) close(); });
-    $('payForm').addEventListener('submit', function(e){
-      e.preventDefault();
-      var name = $('payName').value.trim(), phone = $('payPhone').value.trim(), email = $('payEmail').value.trim();
-      var err = $('payErr');
-      if(!name || !phone){ err.textContent = curLang==='en' ? 'Please enter your name and phone.' : 'من فضلك أدخل الاسم ورقم الهاتف.'; err.hidden = false; return; }
-      var sub = $('paySubmit'), old = sub.textContent;
-      sub.disabled = true; sub.textContent = curLang==='en' ? 'Redirecting…' : 'جارٍ التحويل…';
-      function bad(msg){ err.textContent = msg; err.hidden = false; sub.disabled = false; sub.textContent = old; }
-      fetch('/api/pay/create', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name:name, phone:phone, email:email, lang: curLang }) })
-        .then(function(r){ return r.json().then(function(j){ return { ok:r.ok, j:j }; }); })
-        .then(function(res){
-          if(res.ok && res.j && res.j.redirect_url){ window.location.href = res.j.redirect_url; return; }
-          if(res.j && res.j.error === 'payment_unconfigured') bad(curLang==='en' ? 'Online payment is not available yet.' : 'الدفع الأونلاين غير متاح حاليًا.');
-          else bad(curLang==='en' ? 'Could not start payment. Please book on WhatsApp.' : 'تعذّر بدء الدفع. برجاء الحجز عبر واتساب.');
-        })
-        .catch(function(){ bad(curLang==='en' ? 'Network error. Please try again.' : 'خطأ في الشبكة. حاول مجددًا.'); });
-    });
+    var btn = $('payBtn'); if(!btn) return;
+    fetch('/api/pay/config', { cache:'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(j){ if(j && j.enabled) btn.hidden = false; })
+      .catch(function(){});
   }
 
   // ---- limited-time offer + persistent countdown ----
@@ -668,32 +639,5 @@
 })();
 </script>
 
-<style>
-  .pay-modal{position:fixed;inset:0;background:rgba(28,42,68,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:1000}
-  .pay-box{background:#FFFDF8;border-radius:22px;max-width:420px;width:100%;padding:32px 30px;position:relative;box-shadow:0 30px 70px -30px rgba(0,0,0,.5)}
-  .pay-box h3{font-family:var(--disp);font-size:24px;margin:0 0 6px;color:var(--ink)}
-  html[lang="en"] .pay-box h3{font-weight:400}
-  .pay-amt{color:var(--ink-soft);margin:0 0 18px}.pay-amt b{color:var(--gold2);font-size:20px}
-  .pay-box input{width:100%;padding:13px 15px;margin-bottom:12px;border:1.5px solid var(--line);border-radius:12px;font-family:var(--body);font-size:15px;background:#fff}
-  .pay-box input:focus{outline:none;border-color:var(--gold)}
-  .pay-x{position:absolute;inset-inline-end:16px;top:12px;background:none;border:none;font-size:26px;line-height:1;color:var(--muted);cursor:pointer}
-  .pay-err{background:rgba(178,58,58,.1);color:#B23A3A;padding:10px 12px;border-radius:10px;font-size:14px;margin-bottom:12px}
-  .pay-secure{text-align:center;color:var(--muted);font-size:12.5px;margin:14px 0 0}
-</style>
-<div id="payModal" class="pay-modal" hidden>
-  <div class="pay-box" role="dialog" aria-modal="true" aria-labelledby="payTitle">
-    <button class="pay-x" id="payClose" aria-label="Close">&times;</button>
-    <h3 id="payTitle" data-en="Pay your consultation">دفع الاستشارة</h3>
-    <p class="pay-amt"><span data-en="Amount">المبلغ</span>: <b id="payAmt">200</b> <span id="payCur">جنيه</span></p>
-    <form id="payForm" novalidate>
-      <input id="payName" type="text" required autocomplete="name">
-      <input id="payPhone" type="tel" required autocomplete="tel" dir="ltr">
-      <input id="payEmail" type="email" autocomplete="email" dir="ltr">
-      <div id="payErr" class="pay-err" hidden></div>
-      <button type="submit" class="btn btn-primary btn-lg" id="paySubmit" style="width:100%" data-en="Pay now securely">ادفع الآن بأمان</button>
-    </form>
-    <p class="pay-secure" data-en="Secure payment via PayTabs">دفع آمن عبر PayTabs</p>
-  </div>
-</div>
 </body>
 </html>
