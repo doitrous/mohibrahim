@@ -5,7 +5,9 @@
  *   GET  /api/content            public — site content (JSON)
  *   PUT  /api/content            admin  — replace site content (cookie auth)
  *   GET  /api/articles           public — SEOHub blog articles (JSON array)
- *   POST /api/articles           SEOHub — upsert article(s) (Bearer HUB_TOKEN)
+ *   POST /api/articles           SEOHub — publish (custom-adapter envelope) (Bearer HUB_TOKEN)
+ *   POST /api/seo/sync           SEOHub — snapshot ack (Bearer HUB_TOKEN)
+ *   GET  /api/seo/pages          SEOHub — page registry (Bearer HUB_TOKEN)
  *   POST /api/login {password}   -> sets HttpOnly session cookie
  *   POST /api/logout
  *   GET  /api/me                 -> { admin: bool }
@@ -105,19 +107,67 @@ app.put('/api/content', requireAdmin, function (req, res) {
 app.get('/api/articles', function (_req, res) {
   res.type('application/json').send(fs.readFileSync(ARTICLES, 'utf8'));
 });
+
+// Public base URL for building remoteUrl (SITE_URL env, else the incoming request).
+function baseUrl(req) {
+  if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/+$/, '');
+  const proto = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+  return proto + '://' + (req.headers['x-forwarded-host'] || req.headers.host);
+}
+function articleUrl(base, slug, lang) {
+  return base + '/seohub/?slug=' + encodeURIComponent(slug) + (lang && lang !== 'ar' ? '&lang=' + lang : '');
+}
+// Validate the fields we render. New parity fields are optional; a present-but-malformed
+// one is a 400 (its value reaches a rendered page). Returns an error string or null.
+function badArticle(a, i) {
+  const need = ['lang', 'title', 'slug', 'bodyMd'];
+  for (const k of need) if (typeof a[k] !== 'string' || !a[k].trim()) return 'invalid articles[' + i + '].' + k;
+  if (a.references != null) {
+    if (!Array.isArray(a.references)) return 'invalid articles[' + i + '].references';
+    for (const r of a.references) {
+      if (!r || typeof r.title !== 'string' || !r.title.trim()) return 'invalid articles[' + i + '].references';
+      if (typeof r.url !== 'string' || !/^https:\/\//i.test(r.url)) return 'invalid articles[' + i + '].references';
+    }
+  }
+  if (a.faq != null && !Array.isArray(a.faq)) return 'invalid articles[' + i + '].faq';
+  return null;
+}
+
+// SEOHub receiver. Accepts either the custom-adapter envelope { ..., articles:[...] }
+// (returns { results:[{lang,remoteId,remoteUrl}] }) or a bare article / array (legacy).
 app.post('/api/articles', requireHub, function (req, res) {
-  let arr;
-  try { arr = JSON.parse(fs.readFileSync(ARTICLES, 'utf8')); } catch (_) { arr = []; }
+  const body = req.body || {};
+  const envelope = Array.isArray(body.articles);
+  const incoming = envelope ? body.articles : (Array.isArray(body) ? body : [body]);
+  if (!Array.isArray(incoming) || !incoming.length) return res.status(400).json({ error: 'no articles' });
+
+  for (let i = 0; i < incoming.length; i++) {
+    const err = badArticle(incoming[i] || {}, i);
+    if (err) return res.status(400).json({ error: err });
+  }
+
+  let arr; try { arr = JSON.parse(fs.readFileSync(ARTICLES, 'utf8')); } catch (_) { arr = []; }
   if (!Array.isArray(arr)) arr = [];
-  const incoming = Array.isArray(req.body) ? req.body : [req.body];
+
+  // Top-level envelope fields shared by every language, folded onto each stored article.
+  const shared = envelope ? {
+    externalId: body.externalId, author: body.author, reviewer: body.reviewer,
+    reviewedAt: body.reviewedAt, checklist: body.checklist, cta: body.cta,
+    plannedUpdateAt: body.plannedUpdateAt, image: body.image,
+  } : {};
+
+  const base = baseUrl(req);
+  const results = [];
   incoming.forEach(function (a) {
-    if (!a || !a.slug) return;
     const lang = a.lang || 'ar';
+    const stored = Object.assign({}, envelope ? shared : {}, a, { lang: lang });
     const i = arr.findIndex(function (x) { return x.slug === a.slug && (x.lang || 'ar') === lang; });
-    if (i >= 0) arr[i] = a; else arr.push(a);
+    if (i >= 0) arr[i] = stored; else arr.push(stored);
+    results.push({ lang: lang, remoteId: a.slug + ':' + lang, remoteUrl: articleUrl(base, a.slug, lang) });
   });
+
   fs.writeFileSync(ARTICLES, JSON.stringify(arr, null, 2));
-  res.json({ ok: true, count: arr.length });
+  res.json({ results: results, skipped: [], ok: true, count: arr.length });
 });
 // allow SEOHub to delete an article: DELETE /api/articles/:slug?lang=ar
 app.delete('/api/articles/:slug', requireHub, function (req, res) {
@@ -127,6 +177,13 @@ app.delete('/api/articles/:slug', requireHub, function (req, res) {
   fs.writeFileSync(ARTICLES, JSON.stringify(arr, null, 2));
   res.json({ ok: true, count: arr.length });
 });
+
+// SEOHub runtime contract (custom adapter). On every publish tick the hub pushes a
+// snapshot and pulls the page registry; both are non-fatal on the hub, but answering
+// them keeps the site's runtime status green. Auth = the same Bearer HUB_TOKEN
+// (register the custom site in the hub with secret = HUB_TOKEN).
+app.post('/api/seo/sync', requireHub, function (_req, res) { res.json({ ok: true }); });
+app.get('/api/seo/pages', requireHub, function (_req, res) { res.json({ pages: [] }); });
 
 app.use(express.static(PUBLIC, { extensions: ['html'] }));
 

@@ -21,7 +21,9 @@ data/                runtime store (content.json, articles.json) — mount a vol
 GET  /api/content            public — site content
 PUT  /api/content            admin  — replace content (session cookie)
 GET  /api/articles           public — SEOHub blog articles
-POST /api/articles           SEOHub — upsert article(s)  (Bearer HUB_TOKEN)
+POST /api/articles           SEOHub — publish (custom-adapter envelope or bare)  (Bearer HUB_TOKEN)
+POST /api/seo/sync           SEOHub — snapshot ack  (Bearer HUB_TOKEN)
+GET  /api/seo/pages          SEOHub — page registry (empty)  (Bearer HUB_TOKEN)
 POST /api/login {password}   -> HttpOnly session cookie
 POST /api/logout · GET /api/me
 ```
@@ -48,5 +50,7 @@ Open `/admin/`, log in with `ADMIN_PASSWORD`, edit with live preview, **Save & p
    `public/robots.txt` and the canonical/`og:` tags in `public/index.html`.
 
 ## SEOHub
-Blog articles live at `/api/articles`; SEOHub pushes them with `HUB_TOKEN`.
-See `public/seohub/README.md` for the adapter contract.
+This site is a **custom-adapter receiver**. Register it in SEOHub as a `custom`
+site with `url` = the deployed site and `secret` = this site's `HUB_TOKEN`; the
+hub's built-in `custom` adapter then publishes over HTTP (no code needed in the
+hub). See `public/seohub/README.md` for the envelope, response and endpoints.
