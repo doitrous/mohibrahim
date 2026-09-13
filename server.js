@@ -12,6 +12,11 @@
  *   POST /api/pay/create         public — start a PayTabs hosted payment
  *   POST /api/pay/callback       PayTabs IPN (HMAC-verified) · ALL /api/pay/return
  *   GET  /api/payments           admin  — list recorded payments
+ *   GET  /api/schedule           public — availability (weekly + one-time exceptions)
+ *   PUT  /api/schedule           admin  — set availability
+ *   GET  /api/slots?date=        public — bookable times for a date
+ *   GET  /api/slots/month?ym=    public — per-day available counts (calendar)
+ *   POST /api/appointments       public — book a slot; GET/DELETE (admin) manage
  *   POST /api/login {password}   -> sets HttpOnly session cookie
  *   POST /api/logout
  *   GET  /api/me                 -> { admin: bool }
@@ -43,6 +48,18 @@ function seed(dataName, seedPath, fallback) {
 const CONTENT = seed('content.json', path.join(PUBLIC, 'content.json'), '{}');
 const ARTICLES = seed('articles.json', path.join(PUBLIC, 'seohub', 'articles.json'), '[]');
 const PAYMENTS = seed('payments.json', null, '[]');
+const DEFAULT_SCHEDULE = {
+  timezone: 'Africa/Cairo', slotMinutes: 30, capacity: 1, note: { ar: '', en: '' },
+  weekly: {
+    '0': { open: true, ranges: [['16:00', '21:00']] }, '1': { open: true, ranges: [['16:00', '21:00']] },
+    '2': { open: true, ranges: [['16:00', '21:00']] }, '3': { open: true, ranges: [['16:00', '21:00']] },
+    '4': { open: true, ranges: [['16:00', '21:00']] }, '5': { open: false, ranges: [] },
+    '6': { open: true, ranges: [['16:00', '21:00']] },
+  },
+  exceptions: [],
+};
+const SCHEDULE = seed('schedule.json', null, JSON.stringify(DEFAULT_SCHEDULE, null, 2));
+const APPTS = seed('appointments.json', null, '[]');
 
 // ---- tiny signed-token session (no external dep) ----
 function sign(payload) {
@@ -230,16 +247,18 @@ app.post('/api/pay/create', async function (req, res) {
   const { amount, currency } = consultPrice();
   const b = req.body || {};
   const cartId = 'cons-' + Date.now() + '-' + crypto.randomBytes(3).toString('hex');
+  const appt = b.appointmentId ? readAppts().find(function (x) { return x.id === b.appointmentId; }) : null;
+  const desc = appt ? ('Consultation ' + appt.date + ' ' + appt.time + ' — Dr. Mohamed Shalaby') : 'Consultation — Dr. Mohamed Shalaby';
   const base = baseUrl(req);
   try {
     const j = await ptFetch(cfg, '/payment/request', {
       profile_id: cfg.profileId, tran_type: 'sale', tran_class: 'ecom',
       cart_id: cartId, cart_currency: currency, cart_amount: amount,
-      cart_description: 'Consultation — Dr. Mohamed Shalaby',
+      cart_description: desc,
       paypage_lang: b.lang === 'en' ? 'en' : 'ar',
       customer_details: {
-        name: (b.name || 'Patient').slice(0, 60), email: (b.email || '').slice(0, 100),
-        phone: (b.phone || '').slice(0, 30), country: 'EG',
+        name: (b.name || (appt && appt.name) || 'Patient').slice(0, 60), email: (b.email || (appt && appt.email) || '').slice(0, 100),
+        phone: (b.phone || (appt && appt.phone) || '').slice(0, 30), country: 'EG',
       },
       callback: base + '/api/pay/callback',
       return: base + '/api/pay/return',
@@ -247,7 +266,8 @@ app.post('/api/pay/create', async function (req, res) {
     if (!j || !j.redirect_url) return res.status(502).json({ error: 'gateway_error', detail: j });
     upsertPayment(function (x) { return x.cartId === cartId; }, {
       cartId: cartId, tranRef: j.tran_ref, amount: amount, currency: currency, status: 'pending',
-      name: b.name || '', email: b.email || '', phone: b.phone || '', createdAt: new Date().toISOString(),
+      appointmentId: b.appointmentId || null,
+      name: b.name || (appt && appt.name) || '', email: b.email || (appt && appt.email) || '', phone: b.phone || (appt && appt.phone) || '', createdAt: new Date().toISOString(),
     });
     res.json({ redirect_url: j.redirect_url, tran_ref: j.tran_ref });
   } catch (e) { res.status(502).json({ error: 'gateway_error', detail: String(e && e.message || e) }); }
@@ -266,6 +286,7 @@ app.post('/api/pay/callback', function (req, res) {
   const ref = b.tran_ref || b.tranRef;
   upsertPayment(function (x) { return x.tranRef === ref || x.cartId === b.cart_id; },
     { tranRef: ref, cartId: b.cart_id, status: st === 'A' ? 'paid' : 'failed', responseStatus: st, callbackAt: new Date().toISOString() });
+  if (st === 'A') markApptPaid(ref);
   res.json({ ok: true });
 });
 
@@ -281,6 +302,7 @@ app.all('/api/pay/return', async function (req, res) {
       const st = j && j.payment_result && j.payment_result.response_status;
       ok = st === 'A';
       upsertPayment(function (x) { return x.tranRef === ref; }, { tranRef: ref, status: ok ? 'paid' : 'failed', responseStatus: st, verifiedAt: new Date().toISOString() });
+      if (ok) markApptPaid(ref);
     } catch (_) {}
   }
   res.redirect('/pay/result?status=' + (ok ? 'success' : 'failed') + (ref ? '&ref=' + encodeURIComponent(ref) : ''));
@@ -290,6 +312,128 @@ app.all('/api/pay/return', async function (req, res) {
 app.get('/api/payments', requireAdmin, function (_req, res) { res.json(readPayments()); });
 // Public: is online payment available + how much (so the UI can hide the button if unconfigured).
 app.get('/api/pay/config', function (_req, res) { const p = consultPrice(); res.json({ enabled: paytabsCfg().ok, amount: p.amount, currency: p.currency }); });
+
+// ---- Appointments / scheduling (availability + patient booking) ----
+function readJson(file, fb) { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch (_) { return fb; } }
+function readSchedule() { const s = readJson(SCHEDULE, null); return (s && typeof s === 'object') ? s : DEFAULT_SCHEDULE; }
+function readAppts() { const a = readJson(APPTS, []); return Array.isArray(a) ? a : []; }
+function writeAppts(a) { fs.writeFileSync(APPTS, JSON.stringify(a, null, 2)); }
+function hhmmToMin(t) { const m = /^(\d{1,2}):(\d{2})$/.exec(String(t)); if (!m) return null; const h = +m[1], mi = +m[2]; return (h > 23 || mi > 59) ? null : h * 60 + mi; }
+function minToHHMM(x) { return String(Math.floor(x / 60)).padStart(2, '0') + ':' + String(x % 60).padStart(2, '0'); }
+function isDate(s) { return /^\d{4}-\d{2}-\d{2}$/.test(String(s)); }
+function cleanRanges(r) {
+  return (Array.isArray(r) ? r : []).map(function (x) {
+    return (Array.isArray(x) && hhmmToMin(x[0]) != null && hhmmToMin(x[1]) != null && hhmmToMin(x[1]) > hhmmToMin(x[0])) ? [x[0], x[1]] : null;
+  }).filter(Boolean);
+}
+// "now" in the clinic timezone, so past-slot filtering is correct regardless of server TZ.
+function cairoNow() {
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: (readSchedule().timezone || 'Africa/Cairo'), year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+  const p = {}; parts.forEach(function (x) { p[x.type] = x.value; });
+  return { date: p.year + '-' + p.month + '-' + p.day, min: (+p.hour) * 60 + (+p.minute) };
+}
+function rangesFor(sch, dateStr) {
+  const wd = new Date(dateStr + 'T00:00:00').getDay();
+  const exs = (sch.exceptions || []).filter(function (e) { return e && isDate(e.from) && dateStr >= e.from && dateStr <= (e.to || e.from); });
+  if (exs.length) {
+    const e = exs[exs.length - 1]; // last matching exception wins
+    if (e.type === 'closed') return [];
+    if (Array.isArray(e.ranges) && e.ranges.length) return e.ranges;
+  }
+  const w = (sch.weekly || {})[String(wd)];
+  return (w && w.open && Array.isArray(w.ranges)) ? w.ranges : [];
+}
+function slotsFor(sch, dateStr) {
+  const step = Math.max(5, +sch.slotMinutes || 30), out = [];
+  rangesFor(sch, dateStr).forEach(function (r) {
+    const a = hhmmToMin(r[0]), b = hhmmToMin(r[1]); if (a == null || b == null || b <= a) return;
+    for (let t = a; t + step <= b; t += step) out.push(minToHHMM(t));
+  });
+  return out;
+}
+function takenCounts(dateStr) {
+  const now = Date.now(), TTL = 20 * 60 * 1000, m = {};
+  readAppts().forEach(function (x) {
+    if (x.date !== dateStr || x.status === 'cancelled') return;
+    if (x.status === 'pending' && x.createdAt && (now - Date.parse(x.createdAt)) > TTL) return; // abandoned hold expires
+    m[x.time] = (m[x.time] || 0) + 1;
+  });
+  return m;
+}
+function availableSlots(sch, dateStr, today, nowMin) {
+  const cap = Math.max(1, +sch.capacity || 1), taken = takenCounts(dateStr);
+  return slotsFor(sch, dateStr).filter(function (t) {
+    if (dateStr === today && hhmmToMin(t) <= nowMin) return false;
+    return (taken[t] || 0) < cap;
+  });
+}
+function markApptPaid(tranRef) {
+  const pay = readPayments().find(function (p) { return p.tranRef === tranRef; });
+  if (!pay || !pay.appointmentId) return;
+  const a = readAppts(); let ch = false;
+  a.forEach(function (x) { if (x.id === pay.appointmentId && x.status !== 'cancelled') { x.status = 'paid'; x.tranRef = tranRef; ch = true; } });
+  if (ch) writeAppts(a);
+}
+
+app.get('/api/schedule', function (_req, res) { res.json(readSchedule()); });
+app.put('/api/schedule', requireAdmin, function (req, res) {
+  const b = req.body;
+  if (!b || typeof b !== 'object' || Array.isArray(b)) return res.status(400).json({ error: 'invalid' });
+  const sch = {
+    timezone: 'Africa/Cairo', slotMinutes: Math.max(5, +b.slotMinutes || 30), capacity: Math.max(1, +b.capacity || 1),
+    note: (b.note && typeof b.note === 'object') ? { ar: String(b.note.ar || ''), en: String(b.note.en || '') } : { ar: '', en: '' },
+    weekly: {}, exceptions: [],
+  };
+  for (let d = 0; d < 7; d++) { const w = (b.weekly || {})[String(d)] || {}; sch.weekly[String(d)] = { open: !!w.open, ranges: cleanRanges(w.ranges) }; }
+  (Array.isArray(b.exceptions) ? b.exceptions : []).slice(0, 300).forEach(function (e) {
+    if (!e || !isDate(e.from)) return;
+    sch.exceptions.push({
+      id: String(e.id || ('ex-' + Date.now() + '-' + crypto.randomBytes(2).toString('hex'))),
+      from: e.from, to: isDate(e.to) ? e.to : e.from, type: e.type === 'closed' ? 'closed' : 'open',
+      ranges: cleanRanges(e.ranges),
+      note: (e.note && typeof e.note === 'object') ? { ar: String(e.note.ar || ''), en: String(e.note.en || '') } : { ar: '', en: '' },
+    });
+  });
+  fs.writeFileSync(SCHEDULE, JSON.stringify(sch, null, 2));
+  res.json({ ok: true });
+});
+
+app.get('/api/slots', function (req, res) {
+  const date = String(req.query.date || ''); if (!isDate(date)) return res.status(400).json({ error: 'bad date' });
+  const sch = readSchedule(); const n = cairoNow();
+  res.json({ date: date, slotMinutes: sch.slotMinutes, slots: date < n.date ? [] : availableSlots(sch, date, n.date, n.min) });
+});
+app.get('/api/slots/month', function (req, res) {
+  const ym = String(req.query.ym || ''); if (!/^\d{4}-\d{2}$/.test(ym)) return res.status(400).json({ error: 'bad ym' });
+  const sch = readSchedule(); const n = cairoNow(); const [y, m] = ym.split('-').map(Number);
+  const days = new Date(y, m, 0).getDate(); const out = {};
+  for (let d = 1; d <= days; d++) { const ds = ym + '-' + String(d).padStart(2, '0'); out[ds] = ds < n.date ? 0 : availableSlots(sch, ds, n.date, n.min).length; }
+  res.json({ ym: ym, days: out });
+});
+
+// Patient books a slot. Re-validates availability server-side (capacity + not past).
+app.post('/api/appointments', function (req, res) {
+  const b = req.body || {}, sch = readSchedule(), n = cairoNow();
+  const date = String(b.date || ''), time = String(b.time || '');
+  const name = String(b.name || '').trim(), phone = String(b.phone || '').trim(), email = String(b.email || '').trim();
+  if (!isDate(date) || !/^\d{2}:\d{2}$/.test(time)) return res.status(400).json({ error: 'bad_slot' });
+  if (!name || !phone) return res.status(400).json({ error: 'missing_details' });
+  if (availableSlots(sch, date, n.date, n.min).indexOf(time) < 0) return res.status(409).json({ error: 'slot_unavailable' });
+  const payEnabled = paytabsCfg().ok;
+  const appt = {
+    id: 'apt-' + Date.now() + '-' + crypto.randomBytes(3).toString('hex'), date: date, time: time,
+    name: name.slice(0, 80), phone: phone.slice(0, 30), email: email.slice(0, 100),
+    status: payEnabled ? 'pending' : 'booked', createdAt: new Date().toISOString(),
+  };
+  const a = readAppts(); a.push(appt); writeAppts(a);
+  const p = consultPrice();
+  res.json({ ok: true, id: appt.id, pay: payEnabled, amount: p.amount, currency: p.currency });
+});
+app.get('/api/appointments', requireAdmin, function (_req, res) { res.json(readAppts()); });
+app.delete('/api/appointments/:id', requireAdmin, function (req, res) {
+  const a = readAppts().map(function (x) { return x.id === req.params.id ? Object.assign({}, x, { status: 'cancelled' }) : x; });
+  writeAppts(a); res.json({ ok: true });
+});
 
 app.use(express.static(PUBLIC, { extensions: ['html'] }));
 

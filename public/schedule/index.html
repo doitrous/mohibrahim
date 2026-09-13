@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>احجز موعدك — د. محمد شلبي</title>
+<meta name="description" content="احجز موعد استشارتك مع د. محمد إبراهيم شلبي — اختر اليوم والوقت المناسب لك.">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Marcellus&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap">
+<style>
+  :root{--ink:#1C2A44;--navy2:#33456A;--gold:#B8934B;--gold2:#9A7734;--paper:#F7F1E6;--surface:#FFFDF8;--line:#E7DDC9;--muted:#7C7466;--ink-soft:#41485C;--ok:#2E7D5B;--bad:#B23A3A;
+    --disp:'El Messiri','IBM Plex Sans Arabic',serif;--body:'IBM Plex Sans Arabic',system-ui,sans-serif;}
+  html[lang="en"]{--disp:'Marcellus','Times New Roman',serif;--body:'IBM Plex Sans',system-ui,sans-serif;}
+  *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:var(--navy2);text-decoration:none}a:hover{color:var(--gold2)}
+  .top{background:var(--surface);border-bottom:1px solid var(--line)}
+  .top-in{max-width:960px;margin:0 auto;padding:0 24px;height:74px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .name{font-family:var(--disp);font-weight:700;font-size:19px;color:var(--ink);line-height:1.1}
+  html[lang="en"] .brand .name{font-weight:400}
+  .brand .sub{font-size:10px;letter-spacing:.16em;color:var(--gold2);font-weight:600;margin-top:3px}
+  .topr{display:flex;align-items:center;gap:16px}
+  .back{font-size:14px;font-weight:600;color:var(--ink-soft)}
+  .langtog{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;font-weight:700;font-size:13px;background:#fff;cursor:pointer}
+  .langtog span{padding:7px 12px}.langtog .on{background:var(--ink);color:#fff}.langtog .off{color:var(--muted)}
+  main{max-width:960px;margin:0 auto;padding:40px 24px 80px}
+  .eyebrow{font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold2);font-weight:600}
+  h1{font-family:var(--disp);font-size:36px;line-height:1.15;margin:12px 0 8px;font-weight:700}
+  html[lang="en"] h1{font-weight:400}
+  .lede{color:var(--ink-soft);font-size:16.5px;max-width:560px;margin:0 0 26px}
+  .note{background:rgba(184,147,75,.1);border:1px solid var(--line);border-radius:12px;padding:12px 16px;color:var(--gold2);font-size:14.5px;margin-bottom:22px}
+
+  .layout{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
+  .cal{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px 22px;box-shadow:0 22px 50px -34px rgba(28,42,68,.35)}
+  .cal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .cal-hd .mo{font-family:var(--disp);font-size:20px;font-weight:600}
+  .nav-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .nav-btn:disabled{opacity:.35;cursor:default}
+  .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px}
+  .dow span{text-align:center;font-size:12px;font-weight:600;color:var(--muted)}
+  .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .day{aspect-ratio:1;border:1px solid transparent;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;position:relative;background:#fff;border-color:var(--line)}
+  .day.empty{background:transparent;border-color:transparent;cursor:default}
+  .day.off{color:#C3BBA9;background:#FBF7EE;border-color:transparent;cursor:default}
+  .day.avail:hover{border-color:var(--gold)}
+  .day .dot{width:5px;height:5px;border-radius:50%;background:var(--gold);margin-top:3px}
+  .day.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .day.sel .dot{background:var(--gold)}
+  .legend{display:flex;gap:16px;margin-top:14px;font-size:12.5px;color:var(--muted);flex-wrap:wrap}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-inline-end:5px;vertical-align:middle}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 22px 50px -34px rgba(28,42,68,.35)}
+  .panel .ph{font-family:var(--disp);font-size:18px;font-weight:600;margin:0 0 4px}
+  .panel .psub{color:var(--muted);font-size:13.5px;margin:0 0 16px}
+  .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+  .slot{padding:11px 6px;border:1.5px solid var(--line);border-radius:11px;background:#fff;font-family:var(--body);font-weight:600;font-size:14.5px;color:var(--ink);cursor:pointer;text-align:center}
+  .slot:hover{border-color:var(--gold)}
+  .slot.sel{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+  .empty-slots{color:var(--muted);font-size:14px;text-align:center;padding:24px 8px}
+  .ph-hint{color:var(--muted);font-size:14px;text-align:center;padding:30px 8px}
+
+  .fld{margin-bottom:13px}.fld label{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:6px}
+  .fld input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;font-family:var(--body);font-size:16px;background:#fff;color:var(--ink)}
+  .fld input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,75,.15)}
+  .summ{background:#FBF7EE;border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-bottom:14px;font-size:14.5px}
+  .summ b{color:var(--ink)}
+  .err{background:rgba(178,58,58,.09);color:var(--bad);padding:10px 12px;border-radius:10px;font-size:14px;margin-bottom:12px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;font-family:var(--body);font-weight:700;font-size:16px;padding:15px;border-radius:999px;cursor:pointer;border:none;background:var(--gold);color:var(--ink);box-shadow:0 12px 26px -12px rgba(184,147,75,.75)}
+  .btn:hover{background:var(--gold2);color:#fff}.btn:disabled{opacity:.6;cursor:default}
+  .secure{display:flex;align-items:center;justify-content:center;gap:7px;color:var(--muted);font-size:12.5px;margin-top:12px}
+  .success{text-align:center;padding:14px 6px}
+  .success .ok{width:64px;height:64px;border-radius:50%;background:rgba(46,125,91,.12);color:var(--ok);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+  .success h3{font-family:var(--disp);font-size:22px;margin:0 0 8px}
+
+  @media(max-width:820px){ .layout{grid-template-columns:1fr;gap:20px} .top .back span{display:none} h1{font-size:29px} }
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="brand" href="../index.html">
+    <img src="../images/logo.png" alt="د. محمد شلبي — Diamond Orthodontics" style="height:40px;width:auto;display:block">
+    <span><span class="name">د. محمد شلبي</span><span class="sub" style="display:block">DIAMOND ORTHODONTICS</span></span>
+  </a>
+  <div class="topr">
+    <a class="back" href="../index.html" id="backLink">→ <span data-en="Back to site">العودة للموقع</span></a>
+    <div class="langtog" id="langtog" role="button" tabindex="0" aria-label="Switch language"><span class="on">ع</span><span class="off">EN</span></div>
+  </div>
+</div></header>
+
+<main>
+  <span class="eyebrow" data-en="Appointments">المواعيد</span>
+  <h1 data-en="Book your appointment">احجز موعدك</h1>
+  <p class="lede" data-en="Choose a day and time that suit you. Dr. Mohamed Shalaby sees patients at the Dokki clinic; availability updates in real time.">اختر اليوم والوقت المناسب لك. يستقبل د. محمد شلبي المرضى في عيادة الدقي، والمواعيد المتاحة تُحدَّث لحظيًا.</p>
+  <div class="note" id="schedNote" hidden></div>
+
+  <div class="layout">
+    <div class="cal">
+      <div class="cal-hd">
+        <button class="nav-btn" id="prevMo" aria-label="Previous month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6" id="prevArrow"/></svg></button>
+        <div class="mo" id="moLabel">—</div>
+        <button class="nav-btn" id="nextMo" aria-label="Next month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6" id="nextArrow"/></svg></button>
+      </div>
+      <div class="dow" id="dow"></div>
+      <div class="days" id="days"></div>
+      <div class="legend">
+        <span><i style="background:var(--gold)"></i><span data-en="Available">متاح</span></span>
+        <span><i style="background:#DDD3BF"></i><span data-en="Unavailable">غير متاح</span></span>
+      </div>
+    </div>
+
+    <div class="panel" id="panel">
+      <div id="stepHint" class="ph-hint" data-en="Select an available day to see times.">اختر يومًا متاحًا لعرض المواعيد.</div>
+
+      <div id="stepSlots" hidden>
+        <div class="ph" id="slotsHd">—</div>
+        <div class="psub" data-en="Pick a time">اختر الوقت</div>
+        <div class="slots" id="slots"></div>
+        <div class="empty-slots" id="noSlots" hidden data-en="No available times on this day.">لا توجد مواعيد متاحة في هذا اليوم.</div>
+      </div>
+
+      <div id="stepForm" hidden>
+        <div class="ph" data-en="Your details">بياناتك</div>
+        <div class="summ" id="summ"></div>
+        <div class="fld"><label for="fName" data-en="Full name">الاسم بالكامل</label><input id="fName" type="text" autocomplete="name"></div>
+        <div class="fld"><label for="fPhone" data-en="Phone number">رقم الهاتف</label><input id="fPhone" type="tel" dir="ltr" autocomplete="tel"></div>
+        <div class="fld"><label for="fEmail"><span data-en="Email">البريد الإلكتروني</span> <span style="color:var(--muted);font-weight:400" data-en="(optional)">(اختياري)</span></label><input id="fEmail" type="email" dir="ltr" autocomplete="email"></div>
+        <div class="err" id="err" hidden></div>
+        <button class="btn" id="confirmBtn"><span id="confirmLbl" data-en="Confirm booking">تأكيد الحجز</span></button>
+        <div class="secure" id="secureLine" hidden><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span data-en="You'll pay securely via PayTabs to confirm">تؤكد الحجز بالدفع الآمن عبر PayTabs</span></div>
+      </div>
+
+      <div id="stepDone" hidden>
+        <div class="success">
+          <div class="ok"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <h3 data-en="Appointment booked">تم حجز موعدك</h3>
+          <p id="doneMsg" style="color:var(--ink-soft)"></p>
+          <a href="../index.html" class="btn" style="margin-top:14px" data-en="Back to site">العودة للموقع</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  var htmlEl=document.documentElement;
+  var lang='ar'; try{ if(localStorage.getItem('lang')==='en') lang='en'; }catch(e){}
+  function $(id){return document.getElementById(id);}
+  function all(s){return Array.prototype.slice.call(document.querySelectorAll(s));}
+  var MONTHS={ar:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],
+              en:['January','February','March','April','May','June','July','August','September','October','November','December']};
+  // calendar week starts Saturday (Egypt)
+  var DOW={ar:['السبت','الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'],en:['Sat','Sun','Mon','Tue','Wed','Thu','Fri']};
+  var DAYNAMES={ar:['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],en:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']};
+
+  var today=new Date(); today.setHours(0,0,0,0);
+  var view=new Date(today.getFullYear(),today.getMonth(),1);
+  var minMonth=new Date(today.getFullYear(),today.getMonth(),1);
+  var maxMonth=new Date(today.getFullYear(),today.getMonth()+3,1); // browse up to 3 months ahead
+  var monthDays={}, sel={date:null,time:null}, payCfg={enabled:false,amount:200,currency:'EGP'}, note=null;
+
+  function pad(n){return String(n).padStart(2,'0');}
+  function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+  function curLbl(){return lang==='en'?'EGP':'جنيه';}
+
+  function capture(){ all('[data-en]').forEach(function(el){ if(!el.hasAttribute('data-ar')) el.setAttribute('data-ar', el.textContent); }); }
+  function applyLang(l){
+    lang=l==='en'?'en':'ar'; htmlEl.lang=lang; htmlEl.dir=lang==='en'?'ltr':'rtl';
+    all('[data-en]').forEach(function(el){ el.textContent = lang==='en'?el.getAttribute('data-en'):el.getAttribute('data-ar'); });
+    $('backLink').firstChild.textContent = lang==='en'?'← ':'→ ';
+    $('prevArrow').setAttribute('d', lang==='en'?'M15 6l-6 6 6 6':'M9 6l6 6-6 6');
+    $('nextArrow').setAttribute('d', lang==='en'?'M9 6l6 6-6 6':'M15 6l-6 6 6 6');
+    $('fName').placeholder = lang==='en'?'e.g. Ahmed Mohamed':'مثال: أحمد محمد';
+    $('fPhone').placeholder = lang==='en'?'+20 1XX XXX XXXX':'+20 1XX XXX XXXX';
+    $('fEmail').placeholder = 'name@email.com';
+    try{localStorage.setItem('lang',lang);}catch(e){}
+    if(note){ var t=note[lang]; if(t){ $('schedNote').textContent=t; $('schedNote').hidden=false; } }
+    renderMonth(); if(sel.date) renderSummary();
+    document.title=(lang==='en'?'Book your appointment — Dr. Mohamed Shalaby':'احجز موعدك — د. محمد شلبي');
+  }
+  $('langtog').addEventListener('click',function(){applyLang(lang==='en'?'ar':'en');});
+  $('langtog').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();applyLang(lang==='en'?'ar':'en');}});
+
+  function fmtDate(ds){ var d=new Date(ds+'T00:00:00'); return DAYNAMES[lang][d.getDay()]+' '+d.getDate()+' '+MONTHS[lang][d.getMonth()]; }
+
+  function loadMonth(){
+    var ym=view.getFullYear()+'-'+pad(view.getMonth()+1);
+    fetch('/api/slots/month?ym='+ym,{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+      monthDays=(j&&j.days)||{}; renderMonth();
+    }).catch(function(){ monthDays={}; renderMonth(); });
+  }
+  function renderMonth(){
+    $('moLabel').textContent = MONTHS[lang][view.getMonth()]+' '+view.getFullYear();
+    var dow=$('dow'); dow.innerHTML=''; DOW[lang].forEach(function(n){ var s=document.createElement('span'); s.textContent=n; dow.appendChild(s); });
+    var days=$('days'); days.innerHTML='';
+    var first=new Date(view.getFullYear(),view.getMonth(),1);
+    var lead=(first.getDay()+1)%7; // Saturday-first offset
+    for(var i=0;i<lead;i++){ var e=document.createElement('div'); e.className='day empty'; days.appendChild(e); }
+    var total=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+    for(var d=1;d<=total;d++){
+      var dd=new Date(view.getFullYear(),view.getMonth(),d); var ds=ymd(dd);
+      var cell=document.createElement('div'); cell.textContent=d;
+      var cnt=monthDays[ds]||0; var past=dd<today;
+      if(!past && cnt>0){ cell.className='day avail'+(sel.date===ds?' sel':''); var dot=document.createElement('span'); dot.className='dot'; cell.appendChild(dot);
+        cell.addEventListener('click',(function(x){return function(){ selectDay(x); };})(ds)); }
+      else { cell.className='day off'; }
+      days.appendChild(cell);
+    }
+    $('prevMo').disabled = (view<=minMonth);
+    $('nextMo').disabled = (view>=maxMonth);
+  }
+  $('prevMo').addEventListener('click',function(){ if(view<=minMonth)return; view=new Date(view.getFullYear(),view.getMonth()-1,1); loadMonth(); });
+  $('nextMo').addEventListener('click',function(){ if(view>=maxMonth)return; view=new Date(view.getFullYear(),view.getMonth()+1,1); loadMonth(); });
+
+  function step(which){ ['stepHint','stepSlots','stepForm','stepDone'].forEach(function(s){ $(s).hidden = (s!==which); }); }
+
+  function selectDay(ds){
+    sel.date=ds; sel.time=null; renderMonth();
+    $('slotsHd').textContent=fmtDate(ds);
+    var box=$('slots'); box.innerHTML=''; $('noSlots').hidden=true; step('stepSlots');
+    fetch('/api/slots?date='+ds,{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+      var slots=(j&&j.slots)||[];
+      if(!slots.length){ $('noSlots').hidden=false; return; }
+      slots.forEach(function(t){
+        var b=document.createElement('button'); b.type='button'; b.className='slot'; b.textContent=t;
+        b.addEventListener('click',function(){ selectSlot(t,b); });
+        box.appendChild(b);
+      });
+    }).catch(function(){ $('noSlots').hidden=false; });
+  }
+  function selectSlot(t,btn){
+    sel.time=t; all('.slot').forEach(function(s){s.classList.remove('sel');}); btn.classList.add('sel');
+    renderSummary(); step('stepForm');
+    $('secureLine').hidden = !payCfg.enabled;
+    $('confirmLbl').setAttribute('data-ar', payCfg.enabled?'تأكيد الحجز والدفع':'تأكيد الحجز');
+    $('confirmLbl').setAttribute('data-en', payCfg.enabled?'Confirm & pay':'Confirm booking');
+    $('confirmLbl').textContent = lang==='en'?$('confirmLbl').getAttribute('data-en'):$('confirmLbl').getAttribute('data-ar');
+  }
+  function renderSummary(){
+    if(!sel.date||!sel.time) return;
+    var priceLine = payCfg.enabled ? ('<div style="margin-top:6px"><span>'+(lang==='en'?'Consultation':'الاستشارة')+':</span> <b>'+payCfg.amount+' '+curLbl()+'</b></div>') : '';
+    $('summ').innerHTML = '<div><span>'+(lang==='en'?'Date':'التاريخ')+':</span> <b>'+fmtDate(sel.date)+'</b></div>'+
+                         '<div style="margin-top:4px"><span>'+(lang==='en'?'Time':'الوقت')+':</span> <b dir="ltr">'+sel.time+'</b></div>'+priceLine;
+  }
+
+  $('confirmBtn').addEventListener('click',function(){
+    var name=$('fName').value.trim(), phone=$('fPhone').value.trim(), email=$('fEmail').value.trim();
+    var err=$('err'); function bad(m){err.textContent=m;err.hidden=false;}
+    if(!sel.date||!sel.time){ bad(lang==='en'?'Please pick a day and time.':'من فضلك اختر اليوم والوقت.'); return; }
+    if(!name||!phone){ bad(lang==='en'?'Please enter your name and phone.':'من فضلك أدخل الاسم ورقم الهاتف.'); return; }
+    err.hidden=true; var btn=$('confirmBtn'); btn.disabled=true; var lbl=$('confirmLbl'); var old=lbl.textContent;
+    lbl.textContent=lang==='en'?'Booking…':'جارٍ الحجز…';
+    fetch('/api/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:sel.date,time:sel.time,name:name,phone:phone,email:email,lang:lang})})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+      .then(function(res){
+        if(!res.ok||!res.j.ok){
+          if(res.j&&res.j.error==='slot_unavailable'){ bad(lang==='en'?'Sorry, that time was just taken. Please pick another.':'عذرًا، تم حجز هذا الوقت للتو. اختر وقتًا آخر.'); selectDay(sel.date); }
+          else bad(lang==='en'?'Could not complete the booking. Please try again.':'تعذّر إتمام الحجز. حاول مرة أخرى.');
+          btn.disabled=false; lbl.textContent=old; return;
+        }
+        if(res.j.pay){
+          // proceed to secure payment; appointment holds the slot until paid
+          fetch('/api/pay/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({appointmentId:res.j.id,name:name,phone:phone,email:email,lang:lang})})
+            .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+            .then(function(pr){
+              if(pr.ok&&pr.j.redirect_url){ window.location.href=pr.j.redirect_url; return; }
+              // payment couldn't start — booking still held; show confirmation
+              showDone(true);
+            }).catch(function(){ showDone(true); });
+        } else { showDone(false); }
+      })
+      .catch(function(){ bad(lang==='en'?'Network error. Please try again.':'خطأ في الشبكة. حاول مرة أخرى.'); btn.disabled=false; lbl.textContent=old; });
+  });
+
+  function showDone(pending){
+    var when=fmtDate(sel.date)+' — '+sel.time;
+    var msg = lang==='en'
+      ? ('Your appointment is set for '+when+'. We will contact you on WhatsApp to confirm.')
+      : ('موعدك '+when+'. سنتواصل معك عبر واتساب للتأكيد.');
+    $('doneMsg').textContent=msg; step('stepDone');
+  }
+
+  // boot
+  capture();
+  Promise.all([
+    fetch('/api/pay/config',{cache:'no-store'}).then(function(r){return r.json();}).catch(function(){return null;}),
+    fetch('/api/schedule',{cache:'no-store'}).then(function(r){return r.json();}).catch(function(){return null;})
+  ]).then(function(v){
+    if(v[0]) payCfg=v[0];
+    if(v[1]&&v[1].note&&(v[1].note.ar||v[1].note.en)) note=v[1].note;
+    applyLang(lang); loadMonth();
+  });
+})();
+</script>
+</body>
+</html>

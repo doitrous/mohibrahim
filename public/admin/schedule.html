@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Schedule — Dr. Mohamed Shalaby</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+  :root{--ink:#1C2A44;--gold:#B8934B;--gold2:#9A7734;--paper:#F4F5F7;--surface:#fff;--line:#E2E5EC;--muted:#6B7280;--ok:#2F8F5B;--err:#C4463C;--body:'IBM Plex Sans','IBM Plex Sans Arabic',system-ui,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--body);background:var(--paper);color:var(--ink)}
+  header.top{display:flex;align-items:center;gap:14px;padding:0 18px;height:60px;background:var(--ink);color:#fff;position:sticky;top:0;z-index:5}
+  header.top .logo{font-weight:700;font-size:16px;display:flex;align-items:center;gap:10px}
+  header.top .sub{font-size:11px;letter-spacing:.12em;color:#B8934B;font-weight:600}
+  .grow{flex:1}
+  .status{font-size:13px;color:#C7D0E2}.status.dirty{color:#F0C674}.status.ok{color:#7FD19B}.status.err{color:#F0A199}
+  .btn{border:0;border-radius:9px;padding:9px 15px;font-family:var(--body);font-weight:600;font-size:13.5px;cursor:pointer}
+  .btn-gold{background:var(--gold);color:#1C2A44}.btn-gold:hover{background:#caa85c}
+  .btn-line{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28)}.btn-line:hover{border-color:#fff}
+  .tabs{display:flex;gap:4px;padding:12px 20px 0;max-width:1000px;margin:0 auto}
+  .tabs button{border:0;background:transparent;padding:9px 15px;border-radius:8px 8px 0 0;font-family:var(--body);font-weight:600;font-size:14px;color:var(--muted);cursor:pointer}
+  .tabs button.active{background:var(--surface);color:var(--ink)}
+  main{max-width:1000px;margin:0 auto;padding:0 20px 60px}
+  .panel{display:none}.panel.active{display:block}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:16px 0}
+  .card h3{margin:0 0 4px;font-size:15px}
+  .hint{font-size:12.5px;color:var(--muted);margin:0 0 16px}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  label.lbl{font-size:12.5px;font-weight:600;color:var(--muted);display:block;margin-bottom:5px}
+  input[type=time],input[type=date],input[type=number],input[type=text],select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:var(--body);font-size:14px;color:var(--ink);background:#fff}
+  input:focus,select:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+  .rtl{direction:rtl;text-align:right}
+  .day{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .day:last-child{border-bottom:0}
+  .day .dname{width:110px;flex:0 0 auto;font-weight:600;font-size:14px;padding-top:8px}
+  .day .dbody{flex:1}
+  .toggle{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted);cursor:pointer}
+  .toggle input{width:17px;height:17px}
+  .ranges{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .range{display:flex;align-items:center;gap:8px}
+  .range .to{color:var(--muted);font-size:13px}
+  .mini{border:1px solid var(--line);background:#fff;border-radius:7px;width:30px;height:30px;cursor:pointer;color:var(--muted);font-size:16px;line-height:1}
+  .mini:hover{border-color:var(--gold);color:var(--ink)}
+  .addr{font-size:13px;color:var(--gold2);font-weight:600;background:none;border:0;cursor:pointer;padding:4px 0;margin-top:4px}
+  .exc{border:1px solid var(--line);border-radius:11px;padding:14px;margin-bottom:12px}
+  .exc .top{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .closed-badge{font-size:12px;font-weight:700;color:#8a5a00;background:#FBEED0;border-radius:6px;padding:3px 8px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:start;padding:10px 8px;border-bottom:1px solid var(--line)}
+  th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .badge{font-size:11.5px;font-weight:700;border-radius:6px;padding:3px 8px}
+  .badge.paid{background:#DCF3E6;color:#1E7A48}.badge.booked{background:#E4ECFB;color:#2A4E8F}.badge.pending{background:#FBEED0;color:#8a5a00}.badge.cancelled{background:#F1E3E1;color:#9A4038}
+  .empty{color:var(--muted);text-align:center;padding:36px}
+  .modal{position:fixed;inset:0;background:rgba(20,31,53,.55);display:none;align-items:center;justify-content:center;z-index:50}
+  .modal.open{display:flex}
+  .mcard{background:#fff;border-radius:16px;padding:28px;max-width:400px;width:calc(100% - 40px)}
+  .mcard .fld{margin:12px 0}.mcard input{width:100%}
+  .msg{font-size:13px;margin-top:10px;min-height:16px}.msg.err{color:var(--err)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">🦷 Dr. Shalaby <span class="sub">SCHEDULE</span></div>
+  <div class="grow"></div>
+  <div class="status" id="status">Loading…</div>
+  <a class="btn btn-line" href="index.html">← Content</a>
+  <button class="btn btn-line" id="logoutBtn">Log out</button>
+  <button class="btn btn-gold" id="saveBtn">Save availability</button>
+</header>
+
+<div class="tabs">
+  <button data-tab="avail" class="active" id="tabAvail">Availability</button>
+  <button data-tab="appts" id="tabAppts">Appointments</button>
+</div>
+
+<main>
+  <!-- AVAILABILITY -->
+  <section class="panel active" data-tab="avail">
+    <div class="card">
+      <h3>Booking settings</h3>
+      <p class="hint">How appointment slots are generated from the working hours below.</p>
+      <div class="row" style="gap:22px">
+        <div><label class="lbl">Slot length (minutes)</label><input type="number" id="slotMinutes" min="5" max="240" step="5" style="width:110px"></div>
+        <div><label class="lbl">Capacity per slot</label><input type="number" id="capacity" min="1" max="20" style="width:110px"></div>
+      </div>
+      <div class="row" style="gap:14px;margin-top:14px">
+        <div style="flex:1;min-width:220px"><label class="lbl">Note to patients (Arabic)</label><input type="text" id="noteAr" class="rtl" placeholder="مثال: الدكتور في القاهرة هذا الشهر"></div>
+        <div style="flex:1;min-width:220px"><label class="lbl">Note to patients (English)</label><input type="text" id="noteEn" placeholder="e.g. In Cairo this month"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Weekly working hours</h3>
+      <p class="hint">Recurring hours for each day. Toggle a day off to close it. Add multiple periods for a split day (e.g. morning + evening).</p>
+      <div id="weekly"></div>
+    </div>
+
+    <div class="card">
+      <h3>One-time changes <span style="font-weight:400;color:var(--muted);font-size:13px">(travel, holidays, special days)</span></h3>
+      <p class="hint">Override the weekly hours for a date or a range — mark it closed (e.g. away in Saudi Arabia) or set special hours. Overrides win over the weekly schedule.</p>
+      <div id="exceptions"></div>
+      <button class="addr" id="addExc">+ Add one-time change</button>
+    </div>
+  </section>
+
+  <!-- APPOINTMENTS -->
+  <section class="panel" data-tab="appts">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">Booked appointments</h3>
+        <button class="btn" style="background:var(--paper)" id="refreshAppts">Refresh</button>
+      </div>
+      <p class="hint">Upcoming first. Cancelling frees the slot for other patients.</p>
+      <div id="apptsWrap"><div class="empty">Loading…</div></div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="loginModal"><div class="mcard">
+  <div class="logo" style="color:var(--ink);font-weight:700">🦷 Dr. Shalaby — Admin</div>
+  <div class="fld"><label class="lbl">Password</label><input type="password" id="pw" placeholder="••••••••"></div>
+  <button class="btn btn-gold" id="loginBtn" style="width:100%">Log in</button>
+  <div class="msg" id="loginMsg"></div>
+</div></div>
+
+<script>
+(function(){
+  var el=function(id){return document.getElementById(id);};
+  var sched=null, dirty=false;
+  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  function setStatus(txt,cls){ var s=el('status'); s.textContent=txt; s.className='status '+(cls||''); }
+  function markDirty(){ dirty=true; setStatus('Unsaved changes','dirty'); }
+
+  // ---- tabs ----
+  Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(b){
+    b.onclick=function(){
+      document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('active',x===b);});
+      document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active',p.dataset.tab===b.dataset.tab);});
+      if(b.dataset.tab==='appts') loadAppts();
+    };
+  });
+
+  // ---- weekly editor ----
+  function rangeRow(r){
+    var wrap=document.createElement('div'); wrap.className='range';
+    var a=document.createElement('input'); a.type='time'; a.value=r[0]||'16:00';
+    var to=document.createElement('span'); to.className='to'; to.textContent='→';
+    var b=document.createElement('input'); b.type='time'; b.value=r[1]||'21:00';
+    var rm=document.createElement('button'); rm.className='mini'; rm.textContent='×'; rm.title='Remove period';
+    a.onchange=b.onchange=markDirty;
+    rm.onclick=function(){ wrap.remove(); markDirty(); };
+    wrap.appendChild(a); wrap.appendChild(to); wrap.appendChild(b); wrap.appendChild(rm);
+    wrap._get=function(){ return [a.value,b.value]; };
+    return wrap;
+  }
+  function renderWeekly(){
+    var box=el('weekly'); box.innerHTML='';
+    for(var d=0; d<7; d++){
+      (function(d){
+        var w=(sched.weekly&&sched.weekly[String(d)])||{open:false,ranges:[]};
+        var row=document.createElement('div'); row.className='day'; row.dataset.d=d;
+        var name=document.createElement('div'); name.className='dname'; name.textContent=DAYS[d];
+        var body=document.createElement('div'); body.className='dbody';
+        var tg=document.createElement('label'); tg.className='toggle';
+        var cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!w.open;
+        var tl=document.createElement('span'); tl.textContent='Open';
+        tg.appendChild(cb); tg.appendChild(tl);
+        var ranges=document.createElement('div'); ranges.className='ranges';
+        var add=document.createElement('button'); add.className='addr'; add.textContent='+ Add period';
+        function refresh(){ ranges.style.display=cb.checked?'':'none'; add.style.display=cb.checked?'':'none'; tl.textContent=cb.checked?'Open':'Closed'; }
+        (w.ranges&&w.ranges.length?w.ranges:[['16:00','21:00']]).forEach(function(r){ ranges.appendChild(rangeRow(r)); });
+        add.onclick=function(){ ranges.appendChild(rangeRow(['16:00','21:00'])); markDirty(); };
+        cb.onchange=function(){ refresh(); markDirty(); };
+        body.appendChild(tg); body.appendChild(ranges); body.appendChild(add);
+        row.appendChild(name); row.appendChild(body); box.appendChild(row);
+        row._get=function(){ return { open:cb.checked, ranges:Array.prototype.map.call(ranges.children,function(x){return x._get();}) }; };
+        refresh();
+      })(d);
+    }
+  }
+
+  // ---- exceptions editor ----
+  function excRow(e){
+    e=e||{from:'',to:'',type:'closed',ranges:[],note:{ar:'',en:''}};
+    var wrap=document.createElement('div'); wrap.className='exc';
+    var top=document.createElement('div'); top.className='top';
+    function field(labelText,node){ var d=document.createElement('div'); var l=document.createElement('label'); l.className='lbl'; l.textContent=labelText; d.appendChild(l); d.appendChild(node); return d; }
+    var from=document.createElement('input'); from.type='date'; from.value=e.from||'';
+    var to=document.createElement('input'); to.type='date'; to.value=e.to||e.from||'';
+    var type=document.createElement('select'); ['closed','open'].forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t==='closed'?'Closed (away)':'Open (special hours)';type.appendChild(o);}); type.value=e.type||'closed';
+    var rm=document.createElement('button'); rm.className='mini'; rm.textContent='×'; rm.title='Remove';
+    top.appendChild(field('From',from)); top.appendChild(field('To',to)); top.appendChild(field('Type',type));
+    var rmWrap=document.createElement('div'); rmWrap.style.marginInlineStart='auto'; rmWrap.appendChild(rm); top.appendChild(rmWrap);
+    wrap.appendChild(top);
+
+    var ranges=document.createElement('div'); ranges.className='ranges'; ranges.style.marginTop='10px';
+    var addR=document.createElement('button'); addR.className='addr'; addR.textContent='+ Add period';
+    (e.ranges&&e.ranges.length?e.ranges:[['10:00','14:00']]).forEach(function(r){ ranges.appendChild(rangeRow(r)); });
+    addR.onclick=function(){ ranges.appendChild(rangeRow(['10:00','14:00'])); markDirty(); };
+    var noteWrap=document.createElement('div'); noteWrap.className='row'; noteWrap.style.marginTop='10px';
+    var nAr=document.createElement('input'); nAr.type='text'; nAr.className='rtl'; nAr.placeholder='ملاحظة (اختياري)'; nAr.value=(e.note&&e.note.ar)||''; nAr.style.flex='1';
+    var nEn=document.createElement('input'); nEn.type='text'; nEn.placeholder='Note (optional)'; nEn.value=(e.note&&e.note.en)||''; nEn.style.flex='1';
+    noteWrap.appendChild(field('Note (Arabic)',nAr)); noteWrap.appendChild(field('Note (English)',nEn));
+    var openBox=document.createElement('div'); openBox.appendChild(ranges); openBox.appendChild(addR);
+    wrap.appendChild(openBox); wrap.appendChild(noteWrap);
+
+    function refresh(){ openBox.style.display=type.value==='open'?'':'none'; }
+    type.onchange=function(){ refresh(); markDirty(); };
+    from.onchange=to.onchange=nAr.oninput=nEn.oninput=markDirty;
+    rm.onclick=function(){ wrap.remove(); markDirty(); };
+    refresh();
+    wrap._get=function(){
+      if(!from.value) return null;
+      return { from:from.value, to:to.value||from.value, type:type.value,
+               ranges: type.value==='open'?Array.prototype.map.call(ranges.children,function(x){return x._get();}):[],
+               note:{ar:nAr.value,en:nEn.value} };
+    };
+    return wrap;
+  }
+  function renderExceptions(){
+    var box=el('exceptions'); box.innerHTML='';
+    (sched.exceptions||[]).forEach(function(e){ box.appendChild(excRow(e)); });
+  }
+  el('addExc').onclick=function(){ el('exceptions').appendChild(excRow()); markDirty(); };
+
+  function collect(){
+    var weekly={};
+    Array.prototype.forEach.call(el('weekly').children,function(row){ weekly[row.dataset.d]=row._get(); });
+    var exceptions=Array.prototype.map.call(el('exceptions').children,function(x){return x._get();}).filter(Boolean);
+    return {
+      slotMinutes:+el('slotMinutes').value||30, capacity:+el('capacity').value||1,
+      note:{ar:el('noteAr').value,en:el('noteEn').value},
+      weekly:weekly, exceptions:exceptions,
+    };
+  }
+
+  function renderAll(){
+    el('slotMinutes').value=sched.slotMinutes||30;
+    el('capacity').value=sched.capacity||1;
+    el('noteAr').value=(sched.note&&sched.note.ar)||'';
+    el('noteEn').value=(sched.note&&sched.note.en)||'';
+    renderWeekly(); renderExceptions();
+    ['slotMinutes','capacity','noteAr','noteEn'].forEach(function(id){ el(id).oninput=markDirty; });
+    setStatus('All changes saved','ok'); dirty=false;
+  }
+
+  el('saveBtn').onclick=function(){
+    setStatus('Saving…','');
+    fetch('/api/schedule',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(collect())})
+      .then(function(r){ if(r.status===401){ showLogin('Please log in to save.'); throw new Error('auth'); } if(!r.ok) throw new Error('Save '+r.status); return r.json(); })
+      .then(function(){ dirty=false; setStatus('Saved ✓ — live now','ok'); })
+      .catch(function(e){ if(e.message!=='auth') setStatus('Error: '+e.message,'err'); });
+  };
+
+  // ---- appointments ----
+  function loadAppts(){
+    var wrap=el('apptsWrap'); wrap.innerHTML='<div class="empty">Loading…</div>';
+    fetch('/api/appointments',{cache:'no-store'}).then(function(r){ if(r.status===401){ showLogin(); throw new Error('auth'); } return r.json(); })
+      .then(function(list){
+        list=(list||[]).slice().sort(function(a,b){ return (a.date+a.time) < (b.date+b.time) ? 1 : -1; });
+        if(!list.length){ wrap.innerHTML='<div class="empty">No appointments yet.</div>'; return; }
+        var rows=list.map(function(a){
+          var st=a.status||'booked';
+          return '<tr><td><b>'+a.date+'</b><div style="color:var(--muted);font-size:12.5px">'+a.time+'</div></td>'+
+            '<td>'+esc(a.name||'')+'</td>'+
+            '<td dir="ltr">'+esc(a.phone||'')+(a.email?'<div style="color:var(--muted);font-size:12px">'+esc(a.email)+'</div>':'')+'</td>'+
+            '<td><span class="badge '+st+'">'+st+'</span></td>'+
+            '<td>'+(st==='cancelled'?'':'<button class="mini" title="Cancel" data-id="'+a.id+'">×</button>')+'</td></tr>';
+        }).join('');
+        wrap.innerHTML='<table><thead><tr><th>When</th><th>Patient</th><th>Contact</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>';
+        wrap.querySelectorAll('button[data-id]').forEach(function(btn){
+          btn.onclick=function(){ if(!confirm('Cancel this appointment?')) return;
+            fetch('/api/appointments/'+btn.dataset.id,{method:'DELETE'}).then(function(){ loadAppts(); }); };
+        });
+      }).catch(function(e){ if(e.message!=='auth') wrap.innerHTML='<div class="empty">Could not load.</div>'; });
+  }
+  el('refreshAppts').onclick=loadAppts;
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // ---- auth ----
+  function showLogin(msg){ el('loginModal').classList.add('open'); if(msg){ el('loginMsg').textContent=msg; } el('pw').focus(); }
+  el('loginBtn').onclick=doLogin; el('pw').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+  function doLogin(){
+    el('loginMsg').textContent='…';
+    fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:el('pw').value})})
+      .then(function(r){ if(!r.ok) throw new Error('Wrong password'); return r.json(); })
+      .then(function(){ el('loginModal').classList.remove('open'); el('pw').value=''; });
+  }
+  el('logoutBtn').onclick=function(){ fetch('/api/logout',{method:'POST'}).then(function(){ location.reload(); }); };
+  window.addEventListener('beforeunload',function(e){ if(dirty){ e.preventDefault(); e.returnValue=''; } });
+
+  // ---- boot ----
+  Promise.all([
+    fetch('/api/schedule',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;}),
+    fetch('/api/me',{cache:'no-store'}).then(function(r){return r.ok?r.json():{admin:false};}).catch(function(){return {admin:false};})
+  ]).then(function(res){
+    sched=res[0]||{slotMinutes:30,capacity:1,note:{ar:'',en:''},weekly:{},exceptions:[]};
+    renderAll();
+    if(!res[1].admin) showLogin();
+  });
+})();
+</script>
+</body>
+</html>
