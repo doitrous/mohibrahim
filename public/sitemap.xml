@@ -5,10 +5,7 @@
     <loc>https://mohibrahim.com/</loc>
     <xhtml:link rel="alternate" hreflang="ar" href="https://mohibrahim.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://mohibrahim.com/"/>
+    <lastmod>2026-09-14</lastmod>
     <changefreq>monthly</changefreq><priority>1.0</priority>
   </url>
-  <url><loc>https://mohibrahim.com/seohub/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://mohibrahim.com/legal.html?doc=privacy</loc><priority>0.3</priority></url>
-  <url><loc>https://mohibrahim.com/legal.html?doc=terms</loc><priority>0.3</priority></url>
-  <url><loc>https://mohibrahim.com/legal.html?doc=disclaimer</loc><priority>0.3</priority></url>
 </urlset>
