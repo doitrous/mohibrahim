@@ -11,7 +11,8 @@ server.js            Express: static site + content/admin/SEOHub API
 package.json         deps: express
 Dockerfile           container (node:20-alpine, port 3000)
 docker-compose.yml   local run with a persisted volume
-.env.example         ADMIN_PASSWORD, SESSION_SECRET, HUB_TOKEN, DATA_DIR
+.env.example         ADMIN_PASSWORD, SESSION_SECRET, HUB_TOKEN, DATA_DIR,
+                     SEO_HUB_URL, SEO_HUB_SECRET, SEO_SITE_SLUG
 public/              the site (index.html, legal.html, admin/, seohub/, images/, content.json seed)
 data/                runtime store (content.json, articles.json) — mount a volume here
 ```
@@ -21,9 +22,9 @@ data/                runtime store (content.json, articles.json) — mount a vol
 GET  /api/content            public — site content
 PUT  /api/content            admin  — replace content (session cookie)
 GET  /api/articles           public — SEOHub blog articles
-POST /api/articles           SEOHub — publish (custom-adapter envelope or bare)  (Bearer HUB_TOKEN)
-POST /api/seo/sync           SEOHub — snapshot ack  (Bearer HUB_TOKEN)
-GET  /api/seo/pages          SEOHub — page registry (empty)  (Bearer HUB_TOKEN)
+POST /api/articles           seo-runtime — publish (spec-1 envelope)         (Bearer SEO_HUB_SECRET)
+/api/seo/health, /api/seo/sync, /api/seo/pages,
+/api/seo/pending|approve|reject|publish-now       seo-runtime contract       (Bearer SEO_HUB_SECRET)
 GET  /api/pay/config         public — { enabled, amount, currency }
 POST /api/pay/create         public — start a PayTabs payment -> { redirect_url }
 POST /api/pay/callback       PayTabs IPN (HMAC-verified)
@@ -53,8 +54,9 @@ runs `node server.js`; Dockerfile also works). Auto-deploy on push to `main` is 
 2. Build pack: **Nixpacks** (or Dockerfile). Port: **3000**.
 3. **Storage** → add a Persistent Volume mounted at `/app/data` (keeps content,
    articles & payments across redeploys — **without it these reset on every deploy**).
-4. **Environment**: `ADMIN_PASSWORD`, `SESSION_SECRET` (long random), `HUB_TOKEN` (for SEOHub),
-   `SITE_URL=https://mohibrahim.com`, and the PayTabs keys below.
+4. **Environment**: `ADMIN_PASSWORD`, `SESSION_SECRET` (long random), `HUB_TOKEN` (legacy
+   custom-adapter SEOHub, still used by `DELETE /api/articles/:slug`), `SITE_URL=https://mohibrahim.com`,
+   the PayTabs keys below, and the seo-runtime vars: `SEO_HUB_URL`, `SEO_HUB_SECRET`, `SEO_SITE_SLUG=mohibrahim`.
 5. Domains/canonical/sitemap already point to `mohibrahim.com`. Push to `main` to deploy.
 
 ## Online payment (PayTabs)
@@ -87,7 +89,27 @@ In the PayTabs dashboard no extra config is needed — the callback/return URLs 
 per transaction.
 
 ## SEOHub
-This site is a **custom-adapter receiver**. Register it in SEOHub as a `custom`
-site with `url` = the deployed site and `secret` = this site's `HUB_TOKEN`; the
-hub's built-in `custom` adapter then publishes over HTTP (no code needed in the
-hub). See `public/seohub/README.md` for the envelope, response and endpoints.
+
+The site runs [`@omary98/seo-runtime-express`](https://www.npmjs.com/package/@omary98/seo-runtime-express)
+(mounted in `server.js`, after the static file handler so the existing `/robots.txt` and
+`/sitemap.xml` under `public/` keep winning). It gives the hub `/api/seo/health`,
+`/api/seo/sync`, `/api/seo/pages`, the pending/approve/reject/publish-now proxy, and
+`POST /api/articles` — the last one still writes into the same `data/articles.json` the
+public `GET /api/articles` blog listing reads, via an `onArticle` hook, so nothing about the
+visible blog changes.
+
+Set these three env vars in Coolify (the hub owner does this after merge):
+
+```
+SEO_HUB_URL      https://<seo-hub-host>
+SEO_HUB_SECRET   this site's runtime secret, registered in the hub
+SEO_SITE_SLUG    mohibrahim   (only required until the first successful sync)
+```
+
+The runtime's own snapshot/article store is a `JsonFileStore` at `data/seo-runtime.json`
+(inside `DATA_DIR`, so it survives redeploys as long as the existing volume is mounted).
+
+The old custom-adapter routes (`Bearer HUB_TOKEN`) are gone except for
+`DELETE /api/articles/:slug`, which SEOHub's `custom` adapter never called in practice —
+see `public/seohub/README.md` for that adapter's original envelope shape, now superseded by
+the seo-runtime contract above.

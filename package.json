@@ -12,6 +12,8 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@omary98/seo-runtime-core": "^0.1.2",
+    "@omary98/seo-runtime-express": "^0.1.2",
     "express": "^4.19.2"
   }
 }

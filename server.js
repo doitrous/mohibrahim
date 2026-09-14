@@ -4,10 +4,9 @@
  * Serves the static site from /public and provides:
  *   GET  /api/content            public — site content (JSON)
  *   PUT  /api/content            admin  — replace site content (cookie auth)
- *   GET  /api/articles           public — SEOHub blog articles (JSON array)
- *   POST /api/articles           SEOHub — publish (custom-adapter envelope) (Bearer HUB_TOKEN)
- *   POST /api/seo/sync           SEOHub — snapshot ack (Bearer HUB_TOKEN)
- *   GET  /api/seo/pages          SEOHub — page registry (Bearer HUB_TOKEN)
+ *   GET  /api/articles            public — SEOHub blog articles (JSON array)
+ *   /api/seo/*, POST /api/articles  seo-runtime (@omary98/seo-runtime-express),
+ *                                   Bearer SEO_HUB_SECRET — see README.md
  *   GET  /api/pay/config         public — online payment availability + amount
  *   POST /api/pay/create         public — start a PayTabs hosted payment
  *   POST /api/pay/callback       PayTabs IPN (HMAC-verified) · ALL /api/pay/return
@@ -140,58 +139,7 @@ function baseUrl(req) {
 function articleUrl(base, slug, lang) {
   return base + '/seohub/?slug=' + encodeURIComponent(slug) + (lang && lang !== 'ar' ? '&lang=' + lang : '');
 }
-// Validate the fields we render. New parity fields are optional; a present-but-malformed
-// one is a 400 (its value reaches a rendered page). Returns an error string or null.
-function badArticle(a, i) {
-  const need = ['lang', 'title', 'slug', 'bodyMd'];
-  for (const k of need) if (typeof a[k] !== 'string' || !a[k].trim()) return 'invalid articles[' + i + '].' + k;
-  if (a.references != null) {
-    if (!Array.isArray(a.references)) return 'invalid articles[' + i + '].references';
-    for (const r of a.references) {
-      if (!r || typeof r.title !== 'string' || !r.title.trim()) return 'invalid articles[' + i + '].references';
-      if (typeof r.url !== 'string' || !/^https:\/\//i.test(r.url)) return 'invalid articles[' + i + '].references';
-    }
-  }
-  if (a.faq != null && !Array.isArray(a.faq)) return 'invalid articles[' + i + '].faq';
-  return null;
-}
 
-// SEOHub receiver. Accepts either the custom-adapter envelope { ..., articles:[...] }
-// (returns { results:[{lang,remoteId,remoteUrl}] }) or a bare article / array (legacy).
-app.post('/api/articles', requireHub, function (req, res) {
-  const body = req.body || {};
-  const envelope = Array.isArray(body.articles);
-  const incoming = envelope ? body.articles : (Array.isArray(body) ? body : [body]);
-  if (!Array.isArray(incoming) || !incoming.length) return res.status(400).json({ error: 'no articles' });
-
-  for (let i = 0; i < incoming.length; i++) {
-    const err = badArticle(incoming[i] || {}, i);
-    if (err) return res.status(400).json({ error: err });
-  }
-
-  let arr; try { arr = JSON.parse(fs.readFileSync(ARTICLES, 'utf8')); } catch (_) { arr = []; }
-  if (!Array.isArray(arr)) arr = [];
-
-  // Top-level envelope fields shared by every language, folded onto each stored article.
-  const shared = envelope ? {
-    externalId: body.externalId, author: body.author, reviewer: body.reviewer,
-    reviewedAt: body.reviewedAt, checklist: body.checklist, cta: body.cta,
-    plannedUpdateAt: body.plannedUpdateAt, image: body.image,
-  } : {};
-
-  const base = baseUrl(req);
-  const results = [];
-  incoming.forEach(function (a) {
-    const lang = a.lang || 'ar';
-    const stored = Object.assign({}, envelope ? shared : {}, a, { lang: lang });
-    const i = arr.findIndex(function (x) { return x.slug === a.slug && (x.lang || 'ar') === lang; });
-    if (i >= 0) arr[i] = stored; else arr.push(stored);
-    results.push({ lang: lang, remoteId: a.slug + ':' + lang, remoteUrl: articleUrl(base, a.slug, lang) });
-  });
-
-  fs.writeFileSync(ARTICLES, JSON.stringify(arr, null, 2));
-  res.json({ results: results, skipped: [], ok: true, count: arr.length });
-});
 // allow SEOHub to delete an article: DELETE /api/articles/:slug?lang=ar
 app.delete('/api/articles/:slug', requireHub, function (req, res) {
   let arr; try { arr = JSON.parse(fs.readFileSync(ARTICLES, 'utf8')); } catch (_) { arr = []; }
@@ -201,12 +149,32 @@ app.delete('/api/articles/:slug', requireHub, function (req, res) {
   res.json({ ok: true, count: arr.length });
 });
 
-// SEOHub runtime contract (custom adapter). On every publish tick the hub pushes a
-// snapshot and pulls the page registry; both are non-fatal on the hub, but answering
-// them keeps the site's runtime status green. Auth = the same Bearer HUB_TOKEN
-// (register the custom site in the hub with secret = HUB_TOKEN).
-app.post('/api/seo/sync', requireHub, function (_req, res) { res.json({ ok: true }); });
-app.get('/api/seo/pages', requireHub, function (_req, res) { res.json({ pages: [] }); });
+// seo-runtime's onArticle hook (registered near the bottom, with the rest of the runtime
+// mount): stores incoming articles in the SAME ARTICLES json file GET /api/articles already
+// serves, so the public blog listing keeps working exactly as before — only the transport
+// (POST /api/articles) now goes through @omary98/seo-runtime-express instead of the old
+// custom-adapter route. No `req` is available inside a hook, so the base URL falls back to
+// SITE_URL alone (baseUrl(req)'s host-header fallback doesn't apply here).
+function ingestToLegacyArticles(payload) {
+  const shared = {
+    externalId: payload.externalId, author: payload.author, reviewer: payload.reviewer,
+    reviewedAt: payload.reviewedAt, checklist: payload.checklist, cta: payload.cta,
+    plannedUpdateAt: payload.plannedUpdateAt, image: payload.image,
+  };
+  let arr; try { arr = JSON.parse(fs.readFileSync(ARTICLES, 'utf8')); } catch (_) { arr = []; }
+  if (!Array.isArray(arr)) arr = [];
+  const base = process.env.SITE_URL ? process.env.SITE_URL.replace(/\/+$/, '') : '';
+  const results = [];
+  payload.articles.forEach(function (a) {
+    const lang = a.lang || 'ar';
+    const stored = Object.assign({}, shared, a, { lang: lang });
+    const i = arr.findIndex(function (x) { return x.slug === a.slug && (x.lang || 'ar') === lang; });
+    if (i >= 0) arr[i] = stored; else arr.push(stored);
+    results.push({ lang: lang, remoteId: a.slug + ':' + lang, remoteUrl: articleUrl(base, a.slug, lang) });
+  });
+  fs.writeFileSync(ARTICLES, JSON.stringify(arr, null, 2));
+  return { results: results, skipped: [] };
+}
 
 // ---- PayTabs online consultation payment (hosted payment page) ----
 // Fully wired; needs only the keys. Set PAYTABS_PROFILE_ID + PAYTABS_SERVER_KEY
@@ -436,6 +404,26 @@ app.delete('/api/appointments/:id', requireAdmin, function (req, res) {
   writeAppts(a); res.json({ ok: true });
 });
 
+// Registered ahead of the seo-runtime mount below so the site's own Phase-0 robots.txt /
+// sitemap.xml (served from /public) keep winning: express.static answers first for any file
+// that exists there, and only falls through to the runtime's routes (which have no matching
+// static file) via next().
 app.use(express.static(PUBLIC, { extensions: ['html'] }));
 
-app.listen(PORT, function () { console.log('Shalaby site listening on :' + PORT); });
+// seo-runtime: /api/seo/health, /api/seo/sync, /api/seo/pages, /api/seo/pending|approve|
+// reject|publish-now, and POST /api/articles (via the onArticle hook above, which keeps
+// writing into the existing ARTICLES json file). Both packages are ESM-only; this file is
+// CommonJS, so they're brought in with a dynamic import ahead of app.listen.
+async function main() {
+  const { JsonFileStore } = await import('@omary98/seo-runtime-core');
+  const { seoRuntime } = await import('@omary98/seo-runtime-express');
+  const seoStore = new JsonFileStore(path.join(DATA, 'seo-runtime.json'));
+  seoRuntime({
+    store: seoStore,
+    pages: async function () { return []; },
+    onArticle: async function (payload) { return ingestToLegacyArticles(payload); },
+  })(app);
+
+  app.listen(PORT, function () { console.log('Shalaby site listening on :' + PORT); });
+}
+main();
