@@ -5,7 +5,8 @@
   "description": "Dr. Mohamed Shalaby orthodontics site — static frontend + content/admin/SEOHub backend",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node test/smoke.js"
   },
   "engines": {
     "node": ">=18"
